@@ -17,11 +17,11 @@ export default function LoginPage() {
   const [fullName, setFullName] = useState('')
   const [loading, setLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClient()
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
+    const supabase = createClient()
 
     try {
       if (isSignUp) {

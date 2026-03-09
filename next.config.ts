@@ -12,14 +12,8 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Webpack config for @react-pdf/renderer (canvas dependency)
-  webpack: (config) => {
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      canvas: false,
-    }
-    return config
-  },
+  // Use Turbopack (Next.js 16 default); canvas alias not needed server-side
+  turbopack: {},
 };
 
 export default nextConfig;
