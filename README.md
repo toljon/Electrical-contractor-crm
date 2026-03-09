@@ -1,36 +1,111 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ⚡ VoltTrack — Electrical Testing Platform
 
-## Getting Started
+> Turn field test data into finished, customer-ready reports instantly.
 
-First, run the development server:
+VoltTrack eliminates the 3-4 hours electrical testing companies spend manually generating reports. Technicians capture field data in the app, and professional PDF reports are generated automatically — ready to send the same day.
+
+---
+
+## Stack
+
+- **Next.js 14** (App Router + TypeScript)
+- **Supabase** (Postgres + Auth + Storage)
+- **Tailwind CSS** + **shadcn/ui**
+- **@react-pdf/renderer** — server-side PDF generation
+- **react-hook-form** + **zod** — form validation
+- **react-dropzone** — photo uploads
+
+---
+
+## Quick Start
+
+### 1. Clone & install
+
+```bash
+git clone <repo>
+cd Electrical-contractor-crm
+npm install
+```
+
+### 2. Set up Supabase
+
+1. Create a project at [supabase.com](https://supabase.com)
+2. In the SQL editor, run: `supabase/migrations/001_initial_schema.sql`
+3. Create a Storage bucket named `report-photos`
+
+### 3. Configure environment
+
+```bash
+cp .env.local.example .env.local
+# Fill in your Supabase URL, anon key, and service role key
+```
+
+### 4. Run
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# → http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Core Workflow
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+Login → Create Company → New Report → Add Assets + Readings → Add Findings → Upload Photos → Generate PDF
+```
 
-## Learn More
+### Report Types Supported
+- **NFPA 70B** — Electrical compliance testing (pre-loaded parameters)
+- **Infrared** — Thermal imaging inspections (pre-loaded parameters)
+- **Power Systems** — Load and stress testing
+- **Preventative Maintenance** — Ongoing equipment servicing
 
-To learn more about Next.js, take a look at the following resources:
+### PDF Reports Include
+- Cover page with customer info, site, technician, test date
+- Asset inventory with full equipment details
+- Test readings table (color-coded PASS / FAIL / MARGINAL)
+- Findings section (sorted by severity: Critical → Major → Minor → Observation)
+- Photo appendix
+- Technician signature block
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project Structure
 
-## Deploy on Vercel
+```
+src/
+├── app/
+│   ├── (auth)/login/          # Login / signup
+│   ├── (dashboard)/           # Protected app shell
+│   │   ├── page.tsx           # Dashboard
+│   │   ├── reports/           # Report CRUD + wizard
+│   │   ├── companies/         # Customer management
+│   │   └── settings/          # Account + setup guide
+│   └── api/
+│       ├── reports/[id]/pdf/  # PDF generation endpoint
+│       └── photos/upload/     # Photo upload endpoint
+├── components/
+│   ├── pdf/ReportTemplate.tsx # @react-pdf/renderer template
+│   ├── reports/               # Field input components
+│   └── layout/Sidebar.tsx
+├── lib/supabase/              # Client + server Supabase clients
+├── types/database.ts          # All types + constants
+└── middleware.ts              # Auth protection
+supabase/
+└── migrations/001_initial_schema.sql
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Target Market
+
+Mid-sized electrical testing & compliance companies (10-75 technicians, $2-20M revenue) currently using Word/Excel for reporting.
+
+**Report Types Targeted:** NFPA 70B · Infrared · Power Systems · Preventative Maintenance
+
+---
+
+## Agency Agents
+
+This project uses [agency-agents](https://github.com/msitarzewski/agency-agents) for AI-assisted development. Install agents to `~/.claude/agents/` to activate them.
