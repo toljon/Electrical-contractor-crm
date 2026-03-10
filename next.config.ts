@@ -12,7 +12,13 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  // Webpack config for @react-pdf/renderer (canvas dependency)
+  // Turbopack config for @react-pdf/renderer (canvas dependency)
+  turbopack: {
+    resolveAlias: {
+      canvas: './empty-module.js',
+    },
+  },
+  // Webpack fallback for @react-pdf/renderer (canvas dependency)
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

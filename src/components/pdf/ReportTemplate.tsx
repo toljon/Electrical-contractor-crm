@@ -290,7 +290,7 @@ export default function ReportTemplate({ report }: { report: FullReport }) {
 
   const orderedFindings = [...(report.findings ?? [])].sort((a, b) => {
     const order = { critical: 0, major: 1, minor: 2, observation: 3 }
-    return (order[a.severity] ?? 4) - (order[b.severity] ?? 4)
+    return (order[a.severity as keyof typeof order] ?? 4) - (order[b.severity as keyof typeof order] ?? 4)
   })
 
   const criticalCount = orderedFindings.filter(f => f.severity === 'critical').length
@@ -412,8 +412,8 @@ export default function ReportTemplate({ report }: { report: FullReport }) {
               return (
                 <View key={finding.id} style={styles.findingCard} wrap={false}>
                   <View style={styles.findingHeader}>
-                    <Text style={[styles.severityBadge, { backgroundColor: severityBgColors[finding.severity] }]}>
-                      {SEVERITY_LABELS[finding.severity]}
+                    <Text style={[styles.severityBadge, { backgroundColor: severityBgColors[finding.severity as FindingSeverity] }]}>
+                      {SEVERITY_LABELS[finding.severity as FindingSeverity]}
                     </Text>
                     {assetName && <Text style={styles.findingAsset}>Asset: {assetName}</Text>}
                   </View>

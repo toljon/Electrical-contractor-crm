@@ -42,7 +42,7 @@ export default function FindingsEditor({
   const [findings, setFindings] = useState<LocalFinding[]>(
     initialFindings.map(f => ({
       id: f.id,
-      severity: f.severity,
+      severity: f.severity ?? '',
       description: f.description,
       recommendation: f.recommendation ?? '',
       asset_id: f.asset_id ?? '',

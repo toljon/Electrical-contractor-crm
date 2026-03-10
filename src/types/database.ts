@@ -228,6 +228,7 @@ export interface Finding {
   org_id: string
   report_id: string
   equipment_id: string | null
+  asset_id?: string | null // compat alias for equipment_id
   severity: FindingSeverity | null
   description: string
   standard_ref: string | null
@@ -235,6 +236,7 @@ export interface Finding {
   status: 'open' | 'quoted' | 'approved' | 'scheduled' | 'resolved'
   sort_order: number
   created_at: string
+  asset?: Asset // compat join
 }
 
 export interface Photo {
@@ -246,4 +248,103 @@ export interface Photo {
   storage_path: string
   caption: string | null
   created_at: string
+}
+
+// ─── Backward-compat exports for old MVP pages (will be removed in Tasks 7-11) ───
+
+export type ReportStatus = 'draft' | 'complete' | 'sent'
+export type UserRole = Role
+
+export interface Company {
+  id: string
+  owner_id: string
+  name: string
+  address: string | null
+  city: string | null
+  state: string | null
+  zip: string | null
+  contact_name: string | null
+  contact_email: string | null
+  contact_phone: string | null
+  created_at: string
+}
+
+export interface Site {
+  id: string
+  company_id: string
+  name: string
+  address: string | null
+  city: string | null
+  state: string | null
+  zip: string | null
+  created_at: string
+}
+
+export interface TestReport {
+  id: string
+  owner_id: string
+  company_id: string | null
+  site_id: string | null
+  report_number: string | null
+  report_type: ReportType | null
+  status: ReportStatus
+  test_date: string
+  technician_name: string | null
+  notes: string | null
+  created_at: string
+  updated_at: string
+  company?: Company
+  site?: Site
+}
+
+export interface Asset {
+  id: string
+  report_id: string
+  name: string
+  equipment_type: string | null
+  manufacturer: string | null
+  model: string | null
+  serial_number: string | null
+  location: string | null
+  install_date: string | null
+  sort_order: number
+  created_at: string
+  test_readings?: TestReading[]
+}
+
+export interface FullReport extends TestReport {
+  assets: (Asset & { test_readings: TestReading[] })[]
+  findings: (Finding & { asset?: Asset })[]
+  photos: Photo[]
+}
+
+export const NFPA70B_PARAMETERS = [
+  { parameter: 'Insulation Resistance Phase A-G', unit: 'MΩ' },
+  { parameter: 'Insulation Resistance Phase B-G', unit: 'MΩ' },
+  { parameter: 'Insulation Resistance Phase C-G', unit: 'MΩ' },
+  { parameter: 'Contact Resistance Phase A', unit: 'μΩ' },
+  { parameter: 'Contact Resistance Phase B', unit: 'μΩ' },
+  { parameter: 'Contact Resistance Phase C', unit: 'μΩ' },
+  { parameter: 'Trip Test - Instantaneous', unit: 'A' },
+  { parameter: 'Trip Test - Long Time Delay', unit: 'A' },
+  { parameter: 'Trip Test - Short Time Delay', unit: 'A' },
+  { parameter: 'Rated Voltage', unit: 'V' },
+  { parameter: 'Rated Current', unit: 'A' },
+]
+
+export const INFRARED_PARAMETERS = [
+  { parameter: 'Maximum Temperature', unit: '°F' },
+  { parameter: 'Ambient Temperature', unit: '°F' },
+  { parameter: 'Temperature Rise (ΔT)', unit: '°F' },
+  { parameter: 'Emissivity Setting', unit: '' },
+  { parameter: 'Distance to Target', unit: 'ft' },
+  { parameter: 'Load at Time of Scan', unit: 'A' },
+  { parameter: '% of Rated Load', unit: '%' },
+]
+
+export const SEVERITY_LABELS: Record<FindingSeverity, string> = {
+  critical: 'Critical',
+  major: 'Major',
+  minor: 'Minor',
+  observation: 'Observation',
 }
