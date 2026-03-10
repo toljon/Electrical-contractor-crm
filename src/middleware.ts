@@ -9,9 +9,7 @@ export async function middleware(request: NextRequest) {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       cookies: {
-        getAll() {
-          return request.cookies.getAll()
-        },
+        getAll() { return request.cookies.getAll() },
         setAll(cookiesToSet) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           supabaseResponse = NextResponse.next({ request })
@@ -24,26 +22,35 @@ export async function middleware(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
+  const path = request.nextUrl.pathname
 
-  const { pathname } = request.nextUrl
-
-  // Redirect unauthenticated users to login
-  if (!user && !pathname.startsWith('/login') && !pathname.startsWith('/auth')) {
-    const loginUrl = request.nextUrl.clone()
-    loginUrl.pathname = '/login'
-    return NextResponse.redirect(loginUrl)
+  // Public routes
+  if (path.startsWith('/login') || path.startsWith('/onboarding')) {
+    if (user && path.startsWith('/login')) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
+    }
+    return supabaseResponse
   }
 
-  // Redirect authenticated users away from login
-  if (user && pathname.startsWith('/login')) {
-    const dashboardUrl = request.nextUrl.clone()
-    dashboardUrl.pathname = '/'
-    return NextResponse.redirect(dashboardUrl)
+  // Unauthenticated → login
+  if (!user) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  // Authenticated but no org → onboarding
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('org_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile?.org_id && !path.startsWith('/onboarding')) {
+    return NextResponse.redirect(new URL('/onboarding', request.url))
   }
 
   return supabaseResponse
 }
 
 export const config = {
-  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|api/).*)'],
 }

@@ -20,16 +20,12 @@ export async function GET(
   const report = await fetchFullReport(id)
   if (!report) return NextResponse.json({ error: 'Report not found' }, { status: 404 })
 
-  // Ensure user owns this report
-  if (report.owner_id !== user.id) {
-    return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
-  }
+  // RLS handles authorization — no manual owner_id check needed
 
   const element = React.createElement(ReportTemplate, { report }) as unknown as React.ReactElement<DocumentProps>
   const buffer = await renderToBuffer(element)
 
-  const company = report.company as { name?: string } | null
-  const filename = `VoltTrack-${company?.name ?? 'Report'}-${report.test_date}-${report.report_number ?? id.slice(0, 8)}.pdf`
+  const filename = `VoltTrack-${report.customer?.name ?? 'Report'}-${report.test_date}-${report.report_number ?? id.slice(0, 8)}.pdf`
     .replace(/[^a-zA-Z0-9.\-_]/g, '_')
 
   return new NextResponse(buffer as unknown as BodyInit, {
