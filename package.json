@@ -12,6 +12,7 @@
     "test:run": "vitest run"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.78.0",
     "@base-ui/react": "^1.2.0",
     "@hookform/resolvers": "^5.2.2",
     "@react-pdf/renderer": "^4.3.2",
