@@ -317,7 +317,11 @@ $$;
 CREATE POLICY "org_members" ON organizations
   FOR ALL USING (id = public.current_org_id());
 
--- Profiles: users can read profiles in their org
+-- Profiles: users can always read their own profile (needed for middleware org check)
+CREATE POLICY "profiles_self_read" ON profiles
+  FOR SELECT USING (id = auth.uid());
+
+-- Profiles: users can read/write profiles in their org
 CREATE POLICY "profiles_own_org" ON profiles
   FOR ALL USING (org_id = public.current_org_id());
 
