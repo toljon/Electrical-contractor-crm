@@ -112,7 +112,7 @@ export default function AddEquipmentDialog({
           <DialogTitle>Add Equipment</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="eqName">Tag / Name *</Label>
               <Input
@@ -139,7 +139,7 @@ export default function AddEquipmentDialog({
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Trade</Label>
               <Select value={trade} onValueChange={(v) => setTrade(v ?? '')}>
@@ -165,7 +165,7 @@ export default function AddEquipmentDialog({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="eqMfr">Manufacturer</Label>
               <Input
@@ -184,7 +184,7 @@ export default function AddEquipmentDialog({
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="eqSerial">Serial Number</Label>
               <Input

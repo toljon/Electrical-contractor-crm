@@ -42,7 +42,7 @@ export default async function ReportDetailPage({
   const reportType = report.report_type as ReportType | null
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 md:p-8 max-w-5xl">
       {workOrder ? (
         <Link
           href={`/work-orders/${workOrder.id}`}

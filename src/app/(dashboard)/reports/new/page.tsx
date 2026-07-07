@@ -22,7 +22,7 @@ import type { ReportType } from '@/types/database'
 
 export default function NewReportPage() {
   return (
-    <Suspense fallback={<div className="p-8">Loading...</div>}>
+    <Suspense fallback={<div className="p-4 md:p-8">Loading...</div>}>
       <NewReportForm />
     </Suspense>
   )
@@ -151,7 +151,7 @@ function NewReportForm() {
     (workOrder?.location as { name: string } | null)?.name ?? ''
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-4 md:p-8 max-w-2xl">
       <Link
         href={workOrderId ? `/work-orders/${workOrderId}` : '/reports'}
         className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -205,7 +205,7 @@ function NewReportForm() {
             </div>
 
             {/* Test Date & Report Number */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label htmlFor="testDate">Test Date *</Label>
                 <Input
@@ -228,7 +228,7 @@ function NewReportForm() {
             </div>
 
             {/* Ambient Conditions */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <Label htmlFor="ambientTempF">Ambient Temp (F)</Label>
                 <Input
@@ -261,7 +261,7 @@ function NewReportForm() {
             </div>
 
             {/* Technician Info */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label htmlFor="technicianName">Technician Name</Label>
                 <Input

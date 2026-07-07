@@ -94,7 +94,7 @@ export default function OnboardingPage() {
                   required
                 />
               </div>
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid sm:grid-cols-2 gap-3">
                 <div>
                   <Label htmlFor="city">City</Label>
                   <Input

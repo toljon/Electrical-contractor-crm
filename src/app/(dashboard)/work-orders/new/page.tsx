@@ -33,7 +33,7 @@ interface Technician {
 
 export default function NewWorkOrderPage() {
   return (
-    <Suspense fallback={<div className="p-8">Loading...</div>}>
+    <Suspense fallback={<div className="p-4 md:p-8">Loading...</div>}>
       <NewWorkOrderForm />
     </Suspense>
   )
@@ -166,7 +166,7 @@ function NewWorkOrderForm() {
   }
 
   return (
-    <div className="p-8 max-w-2xl">
+    <div className="p-4 md:p-8 max-w-2xl">
       <Link
         href="/work-orders"
         className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -184,7 +184,7 @@ function NewWorkOrderForm() {
         <CardContent className="pt-6">
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Customer & Location */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label>Customer *</Label>
                 <Select
@@ -228,7 +228,7 @@ function NewWorkOrderForm() {
             </div>
 
             {/* Trade, Work Type & Priority */}
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid sm:grid-cols-3 gap-4">
               <div className="space-y-1">
                 <Label>Trade</Label>
                 <Select value={trade} onValueChange={(v) => setTrade(v ?? '')}>
@@ -277,7 +277,7 @@ function NewWorkOrderForm() {
             </div>
 
             {/* Scheduled Date & Assigned To */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid sm:grid-cols-2 gap-4">
               <div className="space-y-1">
                 <Label htmlFor="scheduledDate">Scheduled Date</Label>
                 <Input

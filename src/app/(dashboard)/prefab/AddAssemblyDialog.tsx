@@ -181,7 +181,7 @@ export default function AddAssemblyDialog() {
               </SelectContent>
             </Select>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="asmNumber">Assembly # *</Label>
               <Input
@@ -202,7 +202,7 @@ export default function AddAssemblyDialog() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Type</Label>
               <Select value={assemblyType} onValueChange={(v) => setAssemblyType(v ?? 'pipe_spool')}>
@@ -236,7 +236,7 @@ export default function AddAssemblyDialog() {
               </Select>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="asmBim">BIM Reference</Label>
               <Input
@@ -256,7 +256,7 @@ export default function AddAssemblyDialog() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="asmHours">Est. Shop Hours</Label>
               <Input

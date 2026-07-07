@@ -103,7 +103,7 @@ export default async function InsightsPage() {
   const severityOrder: FindingSeverity[] = ['critical', 'major', 'minor', 'observation']
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 md:p-8 max-w-5xl">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">Insights</h1>
         <p className="text-gray-500 mt-1">
