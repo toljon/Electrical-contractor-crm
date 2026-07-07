@@ -13,6 +13,7 @@ import type { AssemblyType, AssemblyStatus, Trade, PrefabAssembly } from '@/type
 
 type AssemblyRow = PrefabAssembly & { project: { name: string; project_number: string | null } | null }
 import AddAssemblyDialog from './AddAssemblyDialog'
+import AdvanceStatusButton from './AdvanceStatusButton'
 
 const PIPELINE: AssemblyStatus[] = ['modeled', 'released', 'in_fabrication', 'qc', 'shipped', 'delivered', 'installed']
 
@@ -104,6 +105,7 @@ export default async function PrefabPage() {
                     <Badge className={ASSEMBLY_STATUS_COLORS[a.status as AssemblyStatus]}>
                       {ASSEMBLY_STATUS_LABELS[a.status as AssemblyStatus]}
                     </Badge>
+                    <AdvanceStatusButton assemblyId={a.id} status={a.status as AssemblyStatus} />
                   </div>
                 </div>
               ))}

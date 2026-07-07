@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, ClipboardList,
   FileText, Settings, Wrench, LogOut,
-  Building2, Boxes
+  Building2, Boxes, ChartColumn
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
@@ -15,6 +15,7 @@ const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/projects', label: 'Projects', icon: Building2 },
   { href: '/prefab', label: 'Prefab', icon: Boxes },
+  { href: '/insights', label: 'Insights', icon: ChartColumn },
   { href: '/customers', label: 'Customers', icon: Users },
   { href: '/work-orders', label: 'Work Orders', icon: ClipboardList },
   { href: '/reports', label: 'Reports', icon: FileText },
