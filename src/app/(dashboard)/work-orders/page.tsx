@@ -5,7 +5,7 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Plus, ClipboardList, ChevronRight } from 'lucide-react'
 import { STATUS_COLORS } from '@/types/database'
-import type { WorkOrderStatus, WorkType } from '@/types/database'
+import type { WorkOrderStatus, WorkType, DbRow } from '@/types/database'
 
 const WORK_TYPE_LABELS: Record<WorkType, string> = {
   inspection: 'Inspection',
@@ -53,7 +53,7 @@ export default async function WorkOrdersPage() {
         </Card>
       ) : (
         <div className="space-y-2">
-          {workOrders.map((wo) => (
+          {workOrders.map((wo: DbRow) => (
             <Link key={wo.id} href={`/work-orders/${wo.id}`}>
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="flex items-center justify-between py-4">

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Plus, ClipboardList, AlertTriangle, CheckCircle, Clock } from 'lucide-react'
 import { STATUS_COLORS } from '@/types/database'
-import type { WorkOrderStatus } from '@/types/database'
+import type { WorkOrderStatus, DbRow } from '@/types/database'
 
 export default async function DashboardPage() {
   const supabase = await createClient()
@@ -102,7 +102,7 @@ export default async function DashboardPage() {
             </div>
           ) : (
             <div className="divide-y">
-              {recentWorkOrders.map(wo => (
+              {recentWorkOrders.map((wo: DbRow) => (
                 <Link key={wo.id} href={`/work-orders/${wo.id}`}
                   className="flex items-center justify-between py-3 hover:bg-gray-50 -mx-2 px-2 rounded transition-colors">
                   <div>

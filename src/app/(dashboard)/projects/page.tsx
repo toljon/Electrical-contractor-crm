@@ -9,7 +9,7 @@ import {
   TRADE_LABELS,
   TRADE_COLORS,
 } from '@/types/database'
-import type { ProjectPhase, ProjectMarket, Trade } from '@/types/database'
+import type { ProjectPhase, ProjectMarket, Trade, Project } from '@/types/database'
 import AddProjectDialog from './AddProjectDialog'
 
 function formatValue(cents: number | null) {
@@ -51,7 +51,7 @@ export default async function ProjectsPage() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          {projects.map((p) => (
+          {projects.map((p: Project) => (
             <Card key={p.id}>
               <CardContent className="pt-6">
                 <div className="flex items-start justify-between gap-3">

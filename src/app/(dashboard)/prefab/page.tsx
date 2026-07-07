@@ -9,7 +9,9 @@ import {
   TRADE_LABELS,
   TRADE_COLORS,
 } from '@/types/database'
-import type { AssemblyType, AssemblyStatus, Trade } from '@/types/database'
+import type { AssemblyType, AssemblyStatus, Trade, PrefabAssembly } from '@/types/database'
+
+type AssemblyRow = PrefabAssembly & { project: { name: string; project_number: string | null } | null }
 import AddAssemblyDialog from './AddAssemblyDialog'
 
 const PIPELINE: AssemblyStatus[] = ['modeled', 'released', 'in_fabrication', 'qc', 'shipped', 'delivered', 'installed']
@@ -68,7 +70,7 @@ export default async function PrefabPage() {
         <Card>
           <CardContent className="pt-4">
             <div className="divide-y">
-              {assemblies.map((a) => (
+              {assemblies.map((a: AssemblyRow) => (
                 <div key={a.id} className="flex items-center justify-between py-3 gap-4">
                   <div className="min-w-0">
                     <div className="font-medium text-gray-900">

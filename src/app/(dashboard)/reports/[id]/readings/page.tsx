@@ -18,7 +18,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ArrowLeft, ArrowRight, Plus, Trash2, Save } from 'lucide-react'
 import { toast } from 'sonner'
-import type { ReadingResult } from '@/types/database'
+import type { ReadingResult, DbRow } from '@/types/database'
 
 interface EquipmentItem {
   id: string
@@ -97,10 +97,10 @@ export default function ReadingsPage({
         .order('sort_order')
 
       // Map equipment with their existing readings
-      const mapped: EquipmentWithReadings[] = equipment.map((eq) => {
+      const mapped: EquipmentWithReadings[] = equipment.map((eq: DbRow) => {
         const eqReadings = (existingReadings ?? [])
-          .filter((r) => r.equipment_id === eq.id)
-          .map((r) => ({
+          .filter((r: DbRow) => r.equipment_id === eq.id)
+          .map((r: DbRow) => ({
             id: r.id,
             parameter: r.parameter,
             value: r.value ?? '',
