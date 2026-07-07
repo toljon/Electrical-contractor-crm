@@ -12,6 +12,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent } from '@/components/ui/card'
 import { ArrowLeft } from 'lucide-react'
 import { toast } from 'sonner'
+import { TRADE_LABELS } from '@/types/database'
+import type { Trade } from '@/types/database'
 
 interface Customer {
   id: string
@@ -50,6 +52,7 @@ function NewWorkOrderForm() {
   const [customerId, setCustomerId] = useState(searchParams.get('customerId') ?? '')
   const [locationId, setLocationId] = useState('')
   const [workType, setWorkType] = useState('')
+  const [trade, setTrade] = useState('')
   const [scheduledDate, setScheduledDate] = useState('')
   const [assignedTo, setAssignedTo] = useState('')
   const [priority, setPriority] = useState('normal')
@@ -143,6 +146,7 @@ function NewWorkOrderForm() {
         assigned_to: assignedTo || null,
         order_number: orderNumber,
         work_type: workType,
+        trade: trade || null,
         status: assignedTo ? 'assigned' : 'created',
         scheduled_date: scheduledDate || null,
         priority,
@@ -223,8 +227,23 @@ function NewWorkOrderForm() {
               </div>
             </div>
 
-            {/* Work Type & Priority */}
-            <div className="grid grid-cols-2 gap-4">
+            {/* Trade, Work Type & Priority */}
+            <div className="grid grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <Label>Trade</Label>
+                <Select value={trade} onValueChange={(v) => setTrade(v ?? '')}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select trade..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {(Object.entries(TRADE_LABELS) as [Trade, string][]).map(([val, label]) => (
+                      <SelectItem key={val} value={val}>
+                        {label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
               <div className="space-y-1">
                 <Label>Work Type *</Label>
                 <Select value={workType} onValueChange={(v) => setWorkType(v ?? 'inspection')}>
@@ -233,8 +252,10 @@ function NewWorkOrderForm() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="inspection">Inspection</SelectItem>
+                    <SelectItem value="maintenance">Preventive Maintenance</SelectItem>
                     <SelectItem value="repair">Repair</SelectItem>
                     <SelectItem value="installation">Installation</SelectItem>
+                    <SelectItem value="startup">Startup / Commissioning</SelectItem>
                     <SelectItem value="emergency">Emergency</SelectItem>
                   </SelectContent>
                 </Select>
@@ -310,7 +331,7 @@ function NewWorkOrderForm() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold"
+                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
               >
                 {loading ? 'Creating...' : 'Create Work Order'}
               </Button>

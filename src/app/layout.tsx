@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "VoltTrack — Electrical Testing Platform",
-  description: "Turn field test data into finished customer-ready reports instantly.",
+  title: "TGG Ops — TG Gallagher Mechanical",
+  description: "Field service, inspection reporting, and BIM-driven prefab tracking for TG Gallagher — HVAC, plumbing, and fire protection.",
 };
 
 export default function RootLayout({

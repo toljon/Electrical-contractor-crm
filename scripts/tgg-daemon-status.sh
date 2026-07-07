@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 
-PLIST_NAME="com.volttrack.daemon"
+PLIST_NAME="com.tgg.daemon"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 WATERMARK_FILE="$PROJECT_DIR/data/last_processed_ts"
 LOG_FILE="$PROJECT_DIR/data/daemon.log"
 
-echo "=== VoltTrack Daemon Status ==="
+echo "=== TGG Daemon Status ==="
 echo ""
 
 # Check if launchd job is loaded

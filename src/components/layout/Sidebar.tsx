@@ -5,13 +5,16 @@ import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
 import {
   LayoutDashboard, Users, ClipboardList,
-  FileText, Settings, Zap, LogOut
+  FileText, Settings, Wrench, LogOut,
+  Building2, Boxes
 } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
 
 const navItems = [
   { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+  { href: '/projects', label: 'Projects', icon: Building2 },
+  { href: '/prefab', label: 'Prefab', icon: Boxes },
   { href: '/customers', label: 'Customers', icon: Users },
   { href: '/work-orders', label: 'Work Orders', icon: ClipboardList },
   { href: '/reports', label: 'Reports', icon: FileText },
@@ -32,10 +35,13 @@ export function Sidebar() {
     <aside className="w-60 bg-gray-900 min-h-screen flex flex-col">
       <div className="p-4 border-b border-gray-800">
         <div className="flex items-center gap-2">
-          <div className="bg-yellow-400 rounded p-1.5">
-            <Zap className="h-4 w-4 text-gray-900" />
+          <div className="bg-red-700 rounded p-1.5">
+            <Wrench className="h-4 w-4 text-white" />
           </div>
-          <span className="font-bold text-white text-lg">VoltTrack</span>
+          <div>
+            <span className="font-bold text-white text-lg">TGG Ops</span>
+            <p className="text-[10px] text-gray-500 leading-tight">TG Gallagher · Waltham, MA</p>
+          </div>
         </div>
       </div>
 
@@ -47,7 +53,7 @@ export function Sidebar() {
             className={cn(
               'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
               pathname.startsWith(href)
-                ? 'bg-yellow-400 text-gray-900'
+                ? 'bg-red-700 text-white'
                 : 'text-gray-400 hover:bg-gray-800 hover:text-white'
             )}
           >

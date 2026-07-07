@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     paddingBottom: 20,
     borderBottomWidth: 3,
-    borderBottomColor: '#facc15',
+    borderBottomColor: '#b91c1c',
   },
   logoText: {
     fontSize: 20,
@@ -267,7 +267,7 @@ const severityBgColors: Record<FindingSeverity, string> = {
 export default function ReportTemplate({ report }: { report: ERPFullReport }) {
   const reportTypeLabel = report.report_type
     ? (REPORT_TYPE_LABELS[report.report_type as ReportType] ?? report.report_type)
-    : 'Electrical Test Report'
+    : 'Mechanical Service Report'
 
   // Group readings by equipment
   const equipmentMap = new Map(report.equipment.map(e => [e.id, e]))
@@ -287,11 +287,11 @@ export default function ReportTemplate({ report }: { report: ERPFullReport }) {
   const majorCount = orderedFindings.filter(f => f.severity === 'major').length
 
   return (
-    <Document title={`VoltTrack Report - ${report.customer?.name ?? ''} - ${report.test_date}`}>
+    <Document title={`TG Gallagher Report - ${report.customer?.name ?? ''} - ${report.test_date}`}>
       <Page size="LETTER" style={styles.page}>
         {/* Header */}
         <View style={styles.header} fixed>
-          <Text style={styles.logoText}>⚡ VoltTrack</Text>
+          <Text style={styles.logoText}>TG GALLAGHER</Text>
           <View style={styles.headerRight}>
             {report.report_number && (
               <Text style={styles.reportNumber}>Report #{report.report_number}</Text>
@@ -461,7 +461,7 @@ export default function ReportTemplate({ report }: { report: ERPFullReport }) {
         {/* Footer */}
         <View style={styles.footer} fixed>
           <Text style={styles.footerText}>
-            VoltTrack Electrical Testing Platform · Confidential
+            TG Gallagher · Mechanical Contractors · Waltham, MA · Confidential
           </Text>
           <Text style={styles.footerText} render={({ pageNumber, totalPages }) => `Page ${pageNumber} of ${totalPages}`} />
         </View>

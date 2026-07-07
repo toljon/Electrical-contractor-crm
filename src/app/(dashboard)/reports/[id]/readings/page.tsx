@@ -275,7 +275,7 @@ export default function ReadingsPage({
           </p>
         </div>
         <Link href={`/reports/${reportId}/findings`}>
-          <Button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold">
+          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
             Continue to Findings
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>
@@ -312,7 +312,7 @@ export default function ReadingsPage({
                     size="sm"
                     onClick={() => saveEquipmentReadings(eqIdx)}
                     disabled={item.saving}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-900"
+                    className="bg-red-700 hover:bg-red-800 text-white"
                   >
                     <Save className="h-3.5 w-3.5 mr-1" />
                     {item.saving ? 'Saving...' : 'Save'}
@@ -465,7 +465,7 @@ export default function ReadingsPage({
       {/* Bottom nav */}
       <div className="flex justify-end mt-8">
         <Link href={`/reports/${reportId}/findings`}>
-          <Button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold">
+          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
             Continue to Findings
             <ArrowRight className="h-4 w-4 ml-2" />
           </Button>

@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-PLIST_NAME="com.volttrack.daemon"
+PLIST_NAME="com.tgg.daemon"
 PLIST_PATH="$HOME/Library/LaunchAgents/$PLIST_NAME.plist"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
 # Check prerequisites
-if [[ ! -f "$HOME/.volttrack-daemon.env" ]]; then
-  echo "Error: ~/.volttrack-daemon.env not found."
+if [[ ! -f "$HOME/.tgg-daemon.env" ]]; then
+  echo "Error: ~/.tgg-daemon.env not found."
   echo "Create it with:"
   echo "  SLACK_BOT_TOKEN=xoxb-your-token"
   echo "  SLACK_CHANNEL_ID=C0123456789"
@@ -27,7 +27,7 @@ cat > "$PLIST_PATH" << EOF
     <key>ProgramArguments</key>
     <array>
         <string>/bin/bash</string>
-        <string>$SCRIPT_DIR/volttrack-daemon.sh</string>
+        <string>$SCRIPT_DIR/tgg-daemon.sh</string>
     </array>
     <key>WorkingDirectory</key>
     <string>$PROJECT_DIR</string>
@@ -50,7 +50,7 @@ EOF
 launchctl unload "$PLIST_PATH" 2>/dev/null || true
 launchctl load "$PLIST_PATH"
 
-echo "VoltTrack daemon started."
+echo "TGG daemon started."
 echo "  Polling every 60 seconds"
 echo "  Logs: $PROJECT_DIR/data/daemon.log"
-echo "  Stop: scripts/volttrack-daemon-stop.sh"
+echo "  Stop: scripts/tgg-daemon-stop.sh"

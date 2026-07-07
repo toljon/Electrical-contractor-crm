@@ -99,7 +99,7 @@ export default function NewCustomerPage() {
                   id="name"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Acme Electric Corp"
+                  placeholder="Beacon Property Group"
                   required
                 />
               </div>
@@ -203,7 +203,7 @@ export default function NewCustomerPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold"
+                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
               >
                 {loading ? 'Creating...' : 'Create Customer'}
               </Button>

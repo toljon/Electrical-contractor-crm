@@ -21,8 +21,10 @@ import WorkOrderActions from './WorkOrderActions'
 
 const WORK_TYPE_LABELS: Record<WorkType, string> = {
   inspection: 'Inspection',
+  maintenance: 'Preventive Maintenance',
   repair: 'Repair',
   installation: 'Installation',
+  startup: 'Startup / Commissioning',
   emergency: 'Emergency',
 }
 
@@ -214,7 +216,7 @@ export default async function WorkOrderDetailPage({
             <Link href={`/reports/new?workOrderId=${id}`}>
               <Button
                 size="sm"
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold"
+                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
               >
                 <Plus className="h-3.5 w-3.5 mr-1.5" />
                 Start Inspection
@@ -232,7 +234,7 @@ export default async function WorkOrderDetailPage({
                   {' '}
                   <Link
                     href={`/reports/new?workOrderId=${id}`}
-                    className="text-yellow-600 hover:underline"
+                    className="text-red-700 hover:underline"
                   >
                     Start an inspection
                   </Link>

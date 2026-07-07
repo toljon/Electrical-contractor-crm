@@ -9,12 +9,22 @@ export async function POST(request: NextRequest) {
   const formData = await request.formData()
   const file = formData.get('file') as File
   const reportId = formData.get('report_id') as string
-  const assetId = formData.get('asset_id') as string | null
+  const equipmentId = formData.get('equipment_id') as string | null
   const findingId = formData.get('finding_id') as string | null
   const caption = formData.get('caption') as string | null
 
   if (!file || !reportId) {
     return NextResponse.json({ error: 'file and report_id are required' }, { status: 400 })
+  }
+
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('org_id')
+    .eq('id', user.id)
+    .single()
+
+  if (!profile?.org_id) {
+    return NextResponse.json({ error: 'No organization found for your account' }, { status: 400 })
   }
 
   const ext = file.name.split('.').pop()
@@ -32,8 +42,9 @@ export async function POST(request: NextRequest) {
   const { data, error: dbError } = await supabase
     .from('photos')
     .insert({
+      org_id: profile.org_id,
       report_id: reportId,
-      asset_id: assetId || null,
+      equipment_id: equipmentId || null,
       finding_id: findingId || null,
       storage_path: storagePath,
       caption: caption || null,

@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Zap, Database, Key } from 'lucide-react'
+import { Wrench, Database } from 'lucide-react'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -44,19 +44,19 @@ export default async function SettingsPage() {
       <Card className="mb-6">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Zap className="h-4 w-4 text-yellow-500" />
-            <CardTitle className="text-base">VoltTrack Platform</CardTitle>
+            <Wrench className="h-4 w-4 text-red-700" />
+            <CardTitle className="text-base">TGG Ops Platform</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-3 text-sm">
           <div className="flex justify-between">
-            <span className="text-gray-500">Plan</span>
-            <Badge className="bg-yellow-100 text-yellow-700">MVP / Beta</Badge>
+            <span className="text-gray-500">Trades</span>
+            <span>HVAC · Plumbing · Fire Protection</span>
           </div>
           <Separator />
           <div className="flex justify-between">
             <span className="text-gray-500">Report Templates</span>
-            <span>NFPA 70B · Infrared · Power Systems · Preventative Maintenance</span>
+            <span>ASHRAE 180 · NFPA 25 · Backflow · TAB · Med Gas · Cx</span>
           </div>
           <Separator />
           <div className="flex justify-between">
@@ -75,10 +75,10 @@ export default async function SettingsPage() {
           </div>
         </CardHeader>
         <CardContent className="text-sm text-yellow-800 space-y-3">
-          <p>To fully activate VoltTrack, complete these steps in your Supabase project:</p>
+          <p>To fully activate TGG Ops, complete these steps in your Supabase project:</p>
           <ol className="space-y-2 list-decimal list-inside">
             <li>Create a Supabase project at <span className="font-mono text-xs bg-yellow-100 px-1 rounded">supabase.com</span></li>
-            <li>Run the migration SQL from <span className="font-mono text-xs bg-yellow-100 px-1 rounded">supabase/migrations/001_initial_schema.sql</span></li>
+            <li>Run the migrations in <span className="font-mono text-xs bg-yellow-100 px-1 rounded">supabase/migrations/</span> in order (001 → 003)</li>
             <li>Create a Storage bucket named <span className="font-mono text-xs bg-yellow-100 px-1 rounded">report-photos</span></li>
             <li>Add environment variables to <span className="font-mono text-xs bg-yellow-100 px-1 rounded">.env.local</span></li>
           </ol>
