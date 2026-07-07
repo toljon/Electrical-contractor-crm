@@ -45,6 +45,40 @@ export default function AddAssemblyDialog() {
   const [installLocation, setInstallLocation] = useState('')
   const [shopHoursEstimated, setShopHoursEstimated] = useState('')
   const [scheduledShipDate, setScheduledShipDate] = useState('')
+  const [hoursSuggestion, setHoursSuggestion] = useState<{ median: number; n: number } | null>(null)
+
+  // Data-driven estimating: suggest shop hours from historical actuals
+  // of the same assembly type (and trade, when selected).
+  useEffect(() => {
+    if (!open || !assemblyType) return
+    let cancelled = false
+    async function loadSuggestion() {
+      let query = supabase
+        .from('prefab_assemblies')
+        .select('shop_hours_actual')
+        .eq('assembly_type', assemblyType)
+        .not('shop_hours_actual', 'is', null)
+      if (trade) query = query.eq('trade', trade)
+      const { data } = await query
+      if (cancelled) return
+      const actuals = ((data ?? []) as Array<{ shop_hours_actual: number }>)
+        .map((r) => r.shop_hours_actual)
+        .filter((h) => h != null)
+        .sort((a, b) => a - b)
+      if (actuals.length < 3) {
+        setHoursSuggestion(null)
+        return
+      }
+      const mid = Math.floor(actuals.length / 2)
+      const median =
+        actuals.length % 2 ? actuals[mid] : (actuals[mid - 1] + actuals[mid]) / 2
+      setHoursSuggestion({ median: Math.round(median * 10) / 10, n: actuals.length })
+    }
+    loadSuggestion()
+    return () => {
+      cancelled = true
+    }
+  }, [open, assemblyType, trade]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!open) return
@@ -232,8 +266,18 @@ export default function AddAssemblyDialog() {
                 step="0.5"
                 value={shopHoursEstimated}
                 onChange={(e) => setShopHoursEstimated(e.target.value)}
-                placeholder="16"
+                placeholder={hoursSuggestion ? String(hoursSuggestion.median) : '16'}
               />
+              {hoursSuggestion && (
+                <button
+                  type="button"
+                  onClick={() => setShopHoursEstimated(String(hoursSuggestion.median))}
+                  className="text-xs text-red-700 hover:underline text-left"
+                >
+                  Shop median: {hoursSuggestion.median}h across {hoursSuggestion.n} completed —
+                  use it
+                </button>
+              )}
             </div>
             <div className="space-y-1">
               <Label htmlFor="asmShip">Scheduled Ship Date</Label>
