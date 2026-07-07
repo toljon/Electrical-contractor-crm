@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Card, CardContent } from '@/components/ui/card'
 import { FileText, ChevronRight } from 'lucide-react'
 import { REPORT_TYPE_LABELS } from '@/types/database'
-import type { ReportType } from '@/types/database'
+import type { ReportType, DbRow } from '@/types/database'
 
 export default async function ReportsPage() {
   const supabase = await createClient()
@@ -34,7 +34,7 @@ export default async function ReportsPage() {
         </Card>
       ) : (
         <div className="space-y-2">
-          {reports.map((report) => {
+          {reports.map((report: DbRow) => {
             const customer = report.customer as { name: string } | null
             const location = report.location as { name: string } | null
             const workOrder = report.work_order as { order_number: string | null } | null

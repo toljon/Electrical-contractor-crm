@@ -14,49 +14,39 @@ The prefab module doubles as a growing dataset — estimated vs. actual shop hou
 ## Stack
 
 - **Next.js 16** (App Router + TypeScript)
-- **Supabase** (Postgres + Auth + Storage, multi-tenant with RLS)
+- **Embedded SQLite** (better-sqlite3) — zero-config local database with
+  org scoping enforced server-side; no external database service required
+- **Cookie-session auth** — signed HMAC sessions, scrypt password hashing
 - **Tailwind CSS** + **shadcn/ui**
 - **@react-pdf/renderer** — server-side PDF generation
 - **@anthropic-ai/sdk** — AI executive summaries for inspection reports
 - **react-hook-form** + **zod** — form validation
-- **react-dropzone** — field photo uploads
+- **react-dropzone** — field photo uploads (stored on local disk)
+
+> This version is fully self-contained. The database lives at
+> `data/tgg-ops.db` and photos in `data/uploads/` — back up `data/` to keep
+> everything. The data layer speaks the Supabase client API
+> (`src/lib/supabase/*` are drop-in local adapters), so moving to hosted
+> Supabase later is a matter of swapping those two files back —
+> see [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
 
 ---
 
 ## Quick Start
 
-### 1. Clone & install
-
 ```bash
 git clone <repo>
 cd Electrical-contractor-crm
 npm install
-```
-
-### 2. Set up Supabase
-
-1. Create a project at [supabase.com](https://supabase.com)
-2. In the SQL editor, run the migrations in order:
-   `001_initial_schema.sql` → `002_erp_schema.sql` → `003_tg_gallagher_mechanical.sql`
-3. Create a Storage bucket named `report-photos`
-
-> No hosted project is currently provisioned — see
-> [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for the exact steps
-> (restore the paused `MVP` project, start fresh, or run a local stack).
-
-### 3. Configure environment
-
-```bash
-cp .env.local.example .env.local
-# Fill in your Supabase URL, anon key, and service role key
-# Add ANTHROPIC_API_KEY for AI report summaries
-```
-
-### 4. Run
-
-```bash
 npm run dev
-# → http://localhost:3000
+# → http://localhost:3000 — sign up, name your organization, go
+```
+
+Optional environment (`.env.local`):
+
+```bash
+ANTHROPIC_API_KEY=...   # enables AI executive summaries on reports
+SESSION_SECRET=...      # set in production; dev falls back to a fixed secret
 ```
 
 ---

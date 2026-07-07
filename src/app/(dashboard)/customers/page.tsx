@@ -1,3 +1,4 @@
+import type { DbRow } from '@/types/database'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
@@ -43,7 +44,7 @@ export default async function CustomersPage() {
         </Card>
       ) : (
         <div className="grid gap-4">
-          {customers.map((customer) => {
+          {customers.map((customer: DbRow) => {
             const locationCount =
               (customer.locations as unknown as { count: number }[])?.[0]?.count ?? 0
             const workOrderCount =

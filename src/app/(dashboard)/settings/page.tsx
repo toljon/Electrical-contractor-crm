@@ -66,28 +66,31 @@ export default async function SettingsPage() {
         </CardContent>
       </Card>
 
-      {/* Setup instructions */}
-      <Card className="border-yellow-200 bg-yellow-50">
+      {/* Storage info */}
+      <Card>
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Database className="h-4 w-4 text-yellow-600" />
-            <CardTitle className="text-base text-yellow-900">Supabase Setup Required</CardTitle>
+            <Database className="h-4 w-4 text-gray-500" />
+            <CardTitle className="text-base">Data & Storage</CardTitle>
           </div>
         </CardHeader>
-        <CardContent className="text-sm text-yellow-800 space-y-3">
-          <p>To fully activate TGG Ops, complete these steps in your Supabase project:</p>
-          <ol className="space-y-2 list-decimal list-inside">
-            <li>Create a Supabase project at <span className="font-mono text-xs bg-yellow-100 px-1 rounded">supabase.com</span></li>
-            <li>Run the migrations in <span className="font-mono text-xs bg-yellow-100 px-1 rounded">supabase/migrations/</span> in order (001 → 003)</li>
-            <li>Create a Storage bucket named <span className="font-mono text-xs bg-yellow-100 px-1 rounded">report-photos</span></li>
-            <li>Add environment variables to <span className="font-mono text-xs bg-yellow-100 px-1 rounded">.env.local</span></li>
-          </ol>
-          <div className="mt-3 p-3 bg-white rounded border border-yellow-200 font-mono text-xs space-y-1">
-            <div className="text-gray-500"># .env.local</div>
-            <div>NEXT_PUBLIC_SUPABASE_URL=your_project_url</div>
-            <div>NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key</div>
-            <div>SUPABASE_SERVICE_ROLE_KEY=your_service_role_key</div>
+        <CardContent className="text-sm space-y-3">
+          <div className="flex justify-between">
+            <span className="text-gray-500">Database</span>
+            <span>Embedded SQLite — <span className="font-mono text-xs bg-gray-100 px-1 rounded">data/tgg-ops.db</span></span>
           </div>
+          <Separator />
+          <div className="flex justify-between">
+            <span className="text-gray-500">Photo storage</span>
+            <span className="font-mono text-xs bg-gray-100 px-1 rounded self-center">data/uploads/</span>
+          </div>
+          <Separator />
+          <p className="text-gray-500">
+            This version runs fully self-contained — no external database service required.
+            Back up the <span className="font-mono text-xs bg-gray-100 px-1 rounded">data/</span> directory
+            to preserve all records. A hosted Supabase migration path is documented in{' '}
+            <span className="font-mono text-xs bg-gray-100 px-1 rounded">docs/SUPABASE_SETUP.md</span>.
+          </p>
         </CardContent>
       </Card>
     </div>

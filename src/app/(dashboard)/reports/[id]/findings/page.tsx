@@ -28,7 +28,7 @@ import {
 } from 'lucide-react'
 import { toast } from 'sonner'
 import { SEVERITY_LABELS } from '@/types/database'
-import type { FindingSeverity } from '@/types/database'
+import type { FindingSeverity, DbRow } from '@/types/database'
 
 interface EquipmentOption {
   id: string
@@ -103,7 +103,7 @@ export default function FindingsPage({
 
       // Fetch photos for all findings
       const findingIds = (existingFindings ?? [])
-        .map((f) => f.id)
+        .map((f: DbRow) => f.id)
         .filter(Boolean)
       const photosMap: Record<string, LocalPhoto[]> = {}
       if (findingIds.length > 0) {
@@ -126,7 +126,7 @@ export default function FindingsPage({
 
       if (existingFindings) {
         setFindings(
-          existingFindings.map((f) => ({
+          existingFindings.map((f: DbRow) => ({
             id: f.id,
             severity: (f.severity as FindingSeverity) ?? '',
             description: f.description ?? '',

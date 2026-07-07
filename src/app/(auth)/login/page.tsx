@@ -31,7 +31,9 @@ export default function LoginPage() {
           options: { data: { full_name: fullName } },
         })
         if (error) throw error
-        toast.success('Account created! Check your email to confirm.')
+        toast.success('Account created!')
+        router.push('/onboarding')
+        router.refresh()
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error

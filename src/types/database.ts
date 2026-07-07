@@ -137,6 +137,11 @@ export const ASSEMBLY_STATUS_COLORS: Record<AssemblyStatus, string> = {
   installed: 'bg-green-100 text-green-700',
 }
 
+// Loosely-typed row from the data adapter, for pages that consume joined
+// query results dynamically (matches the previous supabase-js typing).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type DbRow = Record<string, any>
+
 // DB row types (matches Supabase schema)
 export interface Organization {
   id: string

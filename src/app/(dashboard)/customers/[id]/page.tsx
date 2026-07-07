@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Plus, MapPin, Building2, ChevronRight, Wrench, ClipboardList } from 'lucide-react'
-import type { WorkOrderStatus } from '@/types/database'
+import type { WorkOrderStatus, DbRow } from '@/types/database'
 import { STATUS_COLORS } from '@/types/database'
 
 export default async function CustomerDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -90,7 +90,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
               </div>
             ) : (
               <div className="space-y-2">
-                {locations.map((loc) => {
+                {locations.map((loc: DbRow) => {
                   const equipmentCount =
                     (loc.equipment as unknown as { count: number }[])?.[0]?.count ?? 0
 
@@ -136,7 +136,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
               </div>
             ) : (
               <div className="divide-y">
-                {workOrders.map((wo) => (
+                {workOrders.map((wo: DbRow) => (
                   <Link
                     key={wo.id}
                     href={`/work-orders/${wo.id}`}

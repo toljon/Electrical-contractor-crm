@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from '@/lib/supabase/server'
 
 export interface ERPFullReport {
   id: string
@@ -51,10 +51,7 @@ export interface ERPFullReport {
 }
 
 export async function fetchFullReport(reportId: string): Promise<ERPFullReport | null> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  const supabase = await createClient()
 
   const { data: report } = await supabase
     .from('inspection_reports')
@@ -119,10 +116,7 @@ export async function fetchFullReport(reportId: string): Promise<ERPFullReport |
 }
 
 export async function getPhotoUrls(paths: string[]): Promise<Record<string, string>> {
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  )
+  const supabase = await createClient()
 
   const result: Record<string, string> = {}
   for (const path of paths) {
