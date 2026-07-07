@@ -40,6 +40,10 @@ npm install
    `001_initial_schema.sql` → `002_erp_schema.sql` → `003_tg_gallagher_mechanical.sql`
 3. Create a Storage bucket named `report-photos`
 
+> No hosted project is currently provisioned — see
+> [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md) for the exact steps
+> (restore the paused `MVP` project, start fresh, or run a local stack).
+
 ### 3. Configure environment
 
 ```bash
