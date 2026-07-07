@@ -1,17 +1,8 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Allow images from Supabase Storage
-  images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '*.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/**',
-      },
-    ],
-  },
+  // Native module — must stay external to the server bundle
+  serverExternalPackages: ['better-sqlite3'],
   // Turbopack config for @react-pdf/renderer (canvas dependency)
   turbopack: {
     resolveAlias: {
