@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
-import { Zap } from 'lucide-react'
+import { Wrench } from 'lucide-react'
 
 export default function OnboardingPage() {
   const router = useRouter()
@@ -71,10 +71,10 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 justify-center mb-8">
-          <div className="bg-yellow-400 rounded-lg p-2">
-            <Zap className="h-6 w-6 text-gray-900" />
+          <div className="bg-red-700 rounded-lg p-2">
+            <Wrench className="h-6 w-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gray-900">VoltTrack</span>
+          <span className="text-2xl font-bold text-gray-900">TGG Ops</span>
         </div>
 
         <Card>
@@ -90,7 +90,7 @@ export default function OnboardingPage() {
                   id="companyName"
                   value={form.companyName}
                   onChange={e => setForm(f => ({ ...f, companyName: e.target.value }))}
-                  placeholder="Acme Electrical Testing"
+                  placeholder="TG Gallagher"
                   required
                 />
               </div>
@@ -101,7 +101,7 @@ export default function OnboardingPage() {
                     id="city"
                     value={form.city}
                     onChange={e => setForm(f => ({ ...f, city: e.target.value }))}
-                    placeholder="Boston"
+                    placeholder="Waltham"
                   />
                 </div>
                 <div>
@@ -126,12 +126,12 @@ export default function OnboardingPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="licenseNumber">Electrical license number</Label>
+                <Label htmlFor="licenseNumber">Contractor license number</Label>
                 <Input
                   id="licenseNumber"
                   value={form.licenseNumber}
                   onChange={e => setForm(f => ({ ...f, licenseNumber: e.target.value }))}
-                  placeholder="E-12345"
+                  placeholder="MA PL-12345 / SM-6789"
                 />
               </div>
 
@@ -139,7 +139,7 @@ export default function OnboardingPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold"
+                className="w-full bg-red-700 hover:bg-red-800 text-white font-semibold"
                 disabled={loading}
               >
                 {loading ? 'Setting up…' : 'Get started →'}

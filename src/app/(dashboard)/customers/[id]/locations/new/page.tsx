@@ -181,7 +181,7 @@ export default function NewLocationPage() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold"
+                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
               >
                 {loading ? 'Adding...' : 'Add Location'}
               </Button>

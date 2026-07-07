@@ -5,19 +5,19 @@ import { generateExecutiveSummary } from '@/lib/agents/report-agent'
 describe.skipIf(!process.env.ANTHROPIC_API_KEY)('report agent', () => {
   it('generates an executive summary', async () => {
     const summary = await generateExecutiveSummary({
-      customerName: 'Acme Manufacturing',
-      locationName: 'Plant A',
-      reportType: 'NFPA 70B Preventative Maintenance',
+      customerName: 'Longwood Medical Research Center',
+      locationName: 'Building C — Central Plant',
+      reportType: 'ASHRAE/ACCA 180 HVAC Preventive Maintenance',
       testDate: '2026-03-09',
-      technicianName: 'J. Smith, NETA Level III',
+      technicianName: 'J. Smith, MA Refrigeration Tech',
       findings: [
-        { severity: 'major', description: 'Loose connection at bus bar', recommendation: 'Tighten to spec torque', standardRef: 'NFPA 70B 11.17' }
+        { severity: 'major', description: 'AHU-3 supply fan belt fraying and misaligned', recommendation: 'Replace belt set and realign sheaves', standardRef: 'ASHRAE 180 Table 5-3' }
       ],
       readings: [
-        { parameter: 'Insulation Resistance', value: '50', unit: 'MΩ', result: 'marginal' }
+        { parameter: 'Temperature Split (ΔT)', value: '12', unit: '°F', result: 'marginal' }
       ],
     })
     expect(summary.length).toBeGreaterThan(100)
-    expect(summary).toContain('Acme')
+    expect(summary).toContain('Longwood')
   }, 30000)
 })

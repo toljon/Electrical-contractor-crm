@@ -8,7 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { toast } from 'sonner'
-import { Zap } from 'lucide-react'
+import { Wrench } from 'lucide-react'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
@@ -50,19 +50,19 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="bg-yellow-400 rounded-lg p-2">
-            <Zap className="h-6 w-6 text-gray-900" />
+          <div className="bg-red-700 rounded-lg p-2">
+            <Wrench className="h-6 w-6 text-white" />
           </div>
-          <span className="text-2xl font-bold text-gray-900">VoltTrack</span>
+          <span className="text-2xl font-bold text-gray-900">TGG Ops</span>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>{isSignUp ? 'Create your account' : 'Sign in to VoltTrack'}</CardTitle>
+            <CardTitle>{isSignUp ? 'Create your account' : 'Sign in to TGG Ops'}</CardTitle>
             <CardDescription>
               {isSignUp
-                ? 'Start generating professional reports in minutes'
-                : 'The electrical testing platform that saves hours per report'}
+                ? 'Field service, inspections, and prefab tracking for TG Gallagher'
+                : 'TG Gallagher — mechanical field operations platform'}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -112,7 +112,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-yellow-600 hover:underline font-medium"
+                className="text-red-700 hover:underline font-medium"
               >
                 {isSignUp ? 'Sign in' : 'Sign up'}
               </button>

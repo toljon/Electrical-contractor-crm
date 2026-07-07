@@ -18,13 +18,13 @@ interface UploadedPhoto {
 
 interface Props {
   reportId: string
-  assetId?: string
+  equipmentId?: string
   findingId?: string
   initialPhotos?: UploadedPhoto[]
   onUpload?: (photo: UploadedPhoto) => void
 }
 
-export default function PhotoUpload({ reportId, assetId, findingId, initialPhotos = [], onUpload }: Props) {
+export default function PhotoUpload({ reportId, equipmentId, findingId, initialPhotos = [], onUpload }: Props) {
   const [photos, setPhotos] = useState<UploadedPhoto[]>(initialPhotos)
   const [uploading, setUploading] = useState(false)
   const supabase = createClient()
@@ -35,7 +35,7 @@ export default function PhotoUpload({ reportId, assetId, findingId, initialPhoto
       const formData = new FormData()
       formData.append('file', file)
       formData.append('report_id', reportId)
-      if (assetId) formData.append('asset_id', assetId)
+      if (equipmentId) formData.append('equipment_id', equipmentId)
       if (findingId) formData.append('finding_id', findingId)
 
       const res = await fetch('/api/photos/upload', { method: 'POST', body: formData })
@@ -53,7 +53,7 @@ export default function PhotoUpload({ reportId, assetId, findingId, initialPhoto
     }
     setUploading(false)
     toast.success('Photos uploaded')
-  }, [reportId, assetId, findingId, supabase, onUpload])
+  }, [reportId, equipmentId, findingId, supabase, onUpload])
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -80,7 +80,7 @@ export default function PhotoUpload({ reportId, assetId, findingId, initialPhoto
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-          isDragActive ? 'border-yellow-400 bg-yellow-50' : 'border-gray-200 hover:border-gray-300'
+          isDragActive ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-gray-300'
         } ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <input {...getInputProps()} />

@@ -25,7 +25,7 @@ export async function GET(
   const element = React.createElement(ReportTemplate, { report }) as unknown as React.ReactElement<DocumentProps>
   const buffer = await renderToBuffer(element)
 
-  const filename = `VoltTrack-${report.customer?.name ?? 'Report'}-${report.test_date}-${report.report_number ?? id.slice(0, 8)}.pdf`
+  const filename = `TGG-${report.customer?.name ?? 'Report'}-${report.test_date}-${report.report_number ?? id.slice(0, 8)}.pdf`
     .replace(/[^a-zA-Z0-9.\-_]/g, '_')
 
   return new NextResponse(buffer as unknown as BodyInit, {

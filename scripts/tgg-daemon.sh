@@ -2,16 +2,16 @@
 set -euo pipefail
 
 # ─────────────────────────────────────────────
-# VoltTrack Slack Daemon
-# Polls #volttrack-builds and runs Claude Code
+# TGG Ops Slack Daemon
+# Polls #tgg-builds and runs Claude Code
 # ─────────────────────────────────────────────
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 DATA_DIR="$PROJECT_DIR/data"
-LOCK_FILE="/tmp/volttrack-daemon.lock"
+LOCK_FILE="/tmp/tgg-daemon.lock"
 WATERMARK_FILE="$DATA_DIR/last_processed_ts"
-ENV_FILE="$HOME/.volttrack-daemon.env"
+ENV_FILE="$HOME/.tgg-daemon.env"
 MAX_TIMEOUT=600  # 10 minutes per message
 
 # Load credentials
@@ -100,7 +100,7 @@ run_daemon() {
 
     # Build the prompt
     local prompt
-    prompt="You are the VoltTrack automation agent. You are working on the VoltTrack ERP app — a Next.js 16 + Supabase electrical contractor platform.
+    prompt="You are the TGG Ops automation agent. You are working on the TGG Ops app — a Next.js 16 + Supabase platform for TG Gallagher, a mechanical contractor (HVAC, plumbing, fire protection).
 
 A team member posted this request in Slack:
 
@@ -147,7 +147,7 @@ After completing, provide a brief summary of what you changed."
         result_text="${result_text:0:2900}...\n\n_(truncated — see commit for full details)_"
       fi
 
-      slack_post_reply "$msg_ts" ":white_check_mark: Done!\n\n$result_text\n\n:rocket: Auto-deploying to https://volttrack-ten.vercel.app" > /dev/null
+      slack_post_reply "$msg_ts" ":white_check_mark: Done!\n\n$result_text\n\n:rocket: Auto-deploying via Vercel" > /dev/null
       echo "$(date): Successfully processed message $msg_ts"
     elif [[ $exit_code -eq 124 ]]; then
       slack_post_reply "$msg_ts" ":x: Timed out after 10 minutes. The request may be too complex — try breaking it into smaller changes." > /dev/null

@@ -38,7 +38,7 @@ export async function generateExecutiveSummary(data: ReportData): Promise<string
     messages: [
       {
         role: 'user',
-        content: `Write a concise, professional executive summary (2-3 paragraphs) for an electrical inspection report.
+        content: `Write a concise, professional executive summary (2-3 paragraphs) for a mechanical systems inspection report (HVAC, plumbing, or fire protection) issued by TG Gallagher, a mechanical contractor.
 
 Customer: ${data.customerName}
 Location: ${data.locationName}

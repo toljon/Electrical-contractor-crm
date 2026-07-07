@@ -74,7 +74,7 @@ function NewReportForm() {
   // Auto-generate report number on mount
   useEffect(() => {
     const today = new Date().toISOString().split('T')[0].replace(/-/g, '')
-    setReportNumber(`VT-${today}-${Math.floor(1000 + Math.random() * 9000)}`)
+    setReportNumber(`TGG-${today}-${Math.floor(1000 + Math.random() * 9000)}`)
   }, [])
 
   async function handleSubmit(e: React.FormEvent) {
@@ -222,7 +222,7 @@ function NewReportForm() {
                   id="reportNumber"
                   value={reportNumber}
                   onChange={(e) => setReportNumber(e.target.value)}
-                  placeholder="VT-YYYYMMDD-XXXX"
+                  placeholder="TGG-YYYYMMDD-XXXX"
                 />
               </div>
             </div>
@@ -277,7 +277,7 @@ function NewReportForm() {
                   id="technicianCerts"
                   value={technicianCerts}
                   onChange={(e) => setTechnicianCerts(e.target.value)}
-                  placeholder="NETA Level III, PE, etc."
+                  placeholder="MA Master Plumber, ASSE 5110, NICET III, etc."
                 />
               </div>
             </div>
@@ -300,7 +300,7 @@ function NewReportForm() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold"
+                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
               >
                 {loading ? 'Creating...' : 'Create Report & Add Readings'}
               </Button>

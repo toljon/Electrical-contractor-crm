@@ -49,7 +49,7 @@ export default async function DashboardPage() {
           </p>
         </div>
         <Link href="/work-orders/new">
-          <Button className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold">
+          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
             <Plus className="h-4 w-4 mr-2" />
             New Work Order
           </Button>
@@ -89,7 +89,7 @@ export default async function DashboardPage() {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Recent Work Orders</CardTitle>
-          <Link href="/work-orders" className="text-sm text-yellow-600 hover:underline">View all</Link>
+          <Link href="/work-orders" className="text-sm text-red-700 hover:underline">View all</Link>
         </CardHeader>
         <CardContent>
           {!recentWorkOrders?.length ? (

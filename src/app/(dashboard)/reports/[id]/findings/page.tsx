@@ -105,7 +105,7 @@ export default function FindingsPage({
       const findingIds = (existingFindings ?? [])
         .map((f) => f.id)
         .filter(Boolean)
-      let photosMap: Record<string, LocalPhoto[]> = {}
+      const photosMap: Record<string, LocalPhoto[]> = {}
       if (findingIds.length > 0) {
         const { data: photos } = await supabase
           .from('photos')
@@ -375,7 +375,7 @@ export default function FindingsPage({
 
       {/* Complete Report */}
       <div className="mt-8 bg-gray-900 rounded-xl p-6 text-center">
-        <CheckCircle2 className="h-10 w-10 text-yellow-400 mx-auto mb-3" />
+        <CheckCircle2 className="h-10 w-10 text-red-500 mx-auto mb-3" />
         <h2 className="text-lg font-bold text-white mb-1">
           Ready to complete the report?
         </h2>
@@ -386,7 +386,7 @@ export default function FindingsPage({
           onClick={handleCompleteReport}
           disabled={completing}
           size="lg"
-          className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold px-8"
+          className="bg-red-700 hover:bg-red-800 text-white font-bold px-8"
         >
           {completing ? (
             <>
@@ -451,7 +451,7 @@ function FindingCard({
               size="sm"
               onClick={() => onSave(idx)}
               disabled={finding.saving}
-              className="bg-yellow-400 hover:bg-yellow-500 text-gray-900"
+              className="bg-red-700 hover:bg-red-800 text-white"
             >
               <Save className="h-3.5 w-3.5 mr-1" />
               {finding.saving ? 'Saving...' : 'Save'}
@@ -536,7 +536,7 @@ function FindingCard({
               onChange={(e) =>
                 onUpdate(idx, 'standardRef', e.target.value)
               }
-              placeholder="NFPA 70B 11.17.2, NETA 7.3.1..."
+              placeholder="NFPA 25 13.4.3, ASHRAE 180 Table 5-3, 248 CMR 10.00..."
             />
           </div>
           <div className="space-y-1">
