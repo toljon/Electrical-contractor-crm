@@ -315,14 +315,14 @@ export default function FindingsPage({
 
   if (loadingInit) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-gray-500">Loading findings...</p>
       </div>
     )
   }
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-4 md:p-8 max-w-3xl">
       <Link
         href={`/reports/${reportId}/readings`}
         className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -468,7 +468,7 @@ function FindingCard({
         </div>
       </CardHeader>
       <CardContent className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <Label>Severity *</Label>
             <Select
@@ -528,7 +528,7 @@ function FindingCard({
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <Label>Standard Reference</Label>
             <Input

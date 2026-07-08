@@ -30,7 +30,7 @@ export default async function PrefabPage() {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-4 md:p-8">
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Prefab Shop</h1>
@@ -42,7 +42,7 @@ export default async function PrefabPage() {
       </div>
 
       {/* Pipeline summary */}
-      <div className="grid grid-cols-7 gap-3 mb-8">
+      <div className="grid grid-cols-4 md:grid-cols-7 gap-2 md:gap-3 mb-8">
         {PIPELINE.map((s) => (
           <Card key={s}>
             <CardHeader className="pb-1 pt-4 px-4">
@@ -72,7 +72,7 @@ export default async function PrefabPage() {
           <CardContent className="pt-4">
             <div className="divide-y">
               {assemblies.map((a: AssemblyRow) => (
-                <div key={a.id} className="flex items-center justify-between py-3 gap-4">
+                <div key={a.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between py-3 gap-2 sm:gap-4">
                   <div className="min-w-0">
                     <div className="font-medium text-gray-900">
                       {a.assembly_number}
@@ -89,7 +89,7 @@ export default async function PrefabPage() {
                         .join(' · ')}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap">
                     {a.trade && (
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${TRADE_COLORS[a.trade as Trade]}`}>
                         {TRADE_LABELS[a.trade as Trade]}

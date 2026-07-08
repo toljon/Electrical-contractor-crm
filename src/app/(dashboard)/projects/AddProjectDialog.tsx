@@ -131,7 +131,7 @@ export default function AddProjectDialog() {
               required
             />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="projNumber">Project #</Label>
               <Input
@@ -151,7 +151,7 @@ export default function AddProjectDialog() {
               />
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label htmlFor="projCity">City</Label>
               <Input
@@ -197,7 +197,7 @@ export default function AddProjectDialog() {
               ))}
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid sm:grid-cols-2 gap-3">
             <div className="space-y-1">
               <Label>Phase</Label>
               <Select value={phase} onValueChange={(v) => setPhase(v ?? 'preconstruction')}>

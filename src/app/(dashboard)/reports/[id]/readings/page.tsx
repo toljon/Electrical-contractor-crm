@@ -250,14 +250,14 @@ export default function ReadingsPage({
 
   if (loadingInit) {
     return (
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <p className="text-gray-500">Loading equipment...</p>
       </div>
     )
   }
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 md:p-8 max-w-4xl">
       <Link
         href={`/reports/${reportId}`}
         className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 mb-6"
@@ -326,7 +326,7 @@ export default function ReadingsPage({
                   </p>
                 ) : (
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="w-full min-w-[540px] text-sm">
                       <thead>
                         <tr className="border-b text-xs text-gray-500">
                           <th className="text-left pb-2 font-medium w-[35%]">
