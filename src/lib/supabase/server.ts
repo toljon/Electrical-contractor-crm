@@ -12,7 +12,7 @@ import { getEngineContext, getUserById, toAuthUser } from '@/lib/localdb/auth'
 
 function safeUploadPath(storagePath: string): string {
   const resolved = path.resolve(UPLOADS_DIR, storagePath)
-  if (!resolved.startsWith(path.resolve(UPLOADS_DIR))) {
+  if (!resolved.startsWith(path.resolve(UPLOADS_DIR) + path.sep)) {
     throw new Error('Invalid storage path')
   }
   return resolved

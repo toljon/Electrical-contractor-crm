@@ -23,7 +23,7 @@ export async function GET(
 
   const { path: segments } = await params
   const resolved = path.resolve(UPLOADS_DIR, ...segments)
-  if (!resolved.startsWith(path.resolve(UPLOADS_DIR))) {
+  if (!resolved.startsWith(path.resolve(UPLOADS_DIR) + path.sep)) {
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
   }
 

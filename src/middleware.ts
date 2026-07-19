@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/localdb/session'
+import { demoMode } from '@/lib/demo'
 
 // Session-cookie auth guard. Runs on the edge runtime, so it only verifies
 // the signed cookie — the org-membership check (→ /onboarding) lives in the
@@ -8,16 +9,26 @@ export async function middleware(request: NextRequest) {
   const userId = await verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value)
   const path = request.nextUrl.pathname
 
+  // Demo mode: no login screen — unauthenticated visitors get signed in as
+  // the demo user by /api/auth/demo (a Node route with database access).
+  const demoSignIn = (next: string) => {
+    const url = new URL('/api/auth/demo', request.url)
+    url.searchParams.set('next', next)
+    return NextResponse.redirect(url)
+  }
+
   // Public routes
   if (path.startsWith('/login') || path.startsWith('/onboarding')) {
-    if (userId && path.startsWith('/login')) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    if (path.startsWith('/login')) {
+      if (userId) return NextResponse.redirect(new URL('/dashboard', request.url))
+      if (demoMode()) return demoSignIn('/dashboard')
     }
     return NextResponse.next()
   }
 
-  // Unauthenticated → login
+  // Unauthenticated → demo sign-in or login
   if (!userId) {
+    if (demoMode()) return demoSignIn(path === '/' ? '/dashboard' : path)
     return NextResponse.redirect(new URL('/login', request.url))
   }
 

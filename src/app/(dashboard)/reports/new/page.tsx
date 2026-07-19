@@ -71,10 +71,14 @@ function NewReportForm() {
     loadWorkOrder()
   }, [workOrderId]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Auto-generate report number on mount
+  // Auto-generate report number on mount. Deferred so the random value never
+  // participates in hydration (and setState isn't synchronous in the effect).
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0].replace(/-/g, '')
-    setReportNumber(`TGG-${today}-${Math.floor(1000 + Math.random() * 9000)}`)
+    const timer = setTimeout(() => {
+      const today = new Date().toISOString().split('T')[0].replace(/-/g, '')
+      setReportNumber(`TGG-${today}-${Math.floor(1000 + Math.random() * 9000)}`)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [])
 
   async function handleSubmit(e: React.FormEvent) {
