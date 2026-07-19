@@ -11,6 +11,27 @@ The prefab module doubles as a growing dataset — estimated vs. actual shop hou
 
 ---
 
+## How This Fits With Your ERP
+
+TGG Ops is **not** an ERP replacement — it's the operational data layer that
+sits on top of one. An ERP (Trimble/Viewpoint Vista, Spectrum, etc.) remains
+the system of record for money: GL, AP/AR, job costing, union payroll,
+subcontracts, WIP, and compliance. TGG Ops captures what the ERP never sees:
+
+| Layer | ERP (system of record) | TGG Ops (operational layer) |
+|---|---|---|
+| Field service | Invoices a service call | Tech enters readings from the mechanical room, phone-first; same-day NFPA 25 / ASHRAE 180 / backflow PDF |
+| Prefab shop | Cost codes and labor dollars | Est-vs-actual **shop hours per assembly type** — which assemblies run over, which run under |
+| Equipment | A fixed asset or a billing line | Multi-year reading history per unit — the raw material for predictive maintenance |
+| Intelligence | Reports on what happened | AI summaries, failure-trend detection, estimating feedback loops |
+
+The natural integration is one-way-then-two-way sync: TGG Ops adopts the
+ERP's job numbers and cost codes, and pushes completed work orders and shop
+hours back — making the ERP's job costing *more* accurate, not competing
+with it.
+
+---
+
 ## Stack
 
 - **Next.js 16** (App Router + TypeScript)
