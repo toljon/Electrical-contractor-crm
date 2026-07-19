@@ -3,6 +3,7 @@ import path from 'path'
 import fs from 'fs'
 import { SCHEMA } from './schema'
 import { seedDemo } from './seed'
+import { demoMode } from '@/lib/demo'
 
 // Prefer ./data; fall back to /tmp when the working directory is read-only
 // (serverless platforms). /tmp storage is per-instance and ephemeral there —
@@ -35,7 +36,7 @@ export function getDb(): Database.Database {
   db.exec(SCHEMA)
   // Demo mode: a brand-new database auto-seeds the deterministic TGG demo
   // dataset (fixed IDs, so independently seeded serverless replicas agree).
-  if (process.env.TGG_DEMO_SEED === '1' || process.env.VERCEL) {
+  if (demoMode() || process.env.TGG_DEMO_SEED === '1' || process.env.VERCEL) {
     const { c } = db.prepare('SELECT COUNT(*) AS c FROM users').get() as { c: number }
     if (c === 0) seedDemo(db)
   }

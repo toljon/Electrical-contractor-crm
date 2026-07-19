@@ -39,14 +39,21 @@ git clone <repo>
 cd Electrical-contractor-crm
 npm install
 npm run dev
-# → http://localhost:3000 — sign up, name your organization, go
+# → http://localhost:3000 — you land straight on the seeded demo dashboard
 ```
+
+**Demo mode is on by default**: an empty database auto-seeds the TG Gallagher
+demo dataset and every visitor is signed in automatically as
+`demo@tggallagher.com` — no login screen. Set `TGG_DEMO_MODE=0` to restore
+the real login/signup flow (`npm run seed` recreates the demo data and its
+login `demo@tggallagher.com` / `gallagher`).
 
 Optional environment (`.env.local`):
 
 ```bash
 ANTHROPIC_API_KEY=...   # enables AI executive summaries on reports
 SESSION_SECRET=...      # set in production; dev falls back to a fixed secret
+TGG_DEMO_MODE=0         # turn OFF auto-login + auto-seed (real auth flow)
 ```
 
 ---

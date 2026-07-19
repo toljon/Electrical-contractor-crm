@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'No organization found for your account' }, { status: 400 })
   }
 
-  const ext = file.name.split('.').pop()
+  const ext = (file.name.split('.').pop() ?? '').toLowerCase().replace(/[^a-z0-9]/g, '') || 'bin'
   const filename = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const storagePath = `reports/${reportId}/${filename}`
 
