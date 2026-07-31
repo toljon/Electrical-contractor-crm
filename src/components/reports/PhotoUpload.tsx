@@ -80,7 +80,7 @@ export default function PhotoUpload({ reportId, equipmentId, findingId, initialP
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors ${
-          isDragActive ? 'border-red-400 bg-red-50' : 'border-gray-200 hover:border-gray-300'
+          isDragActive ? 'border-brand bg-brand-wash' : 'border-gray-200 hover:border-gray-300'
         } ${uploading ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <input {...getInputProps()} />

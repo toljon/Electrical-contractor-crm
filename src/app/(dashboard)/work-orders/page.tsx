@@ -31,7 +31,7 @@ export default async function WorkOrdersPage() {
           <p className="text-gray-500 mt-1">Manage and track all work orders</p>
         </div>
         <Link href="/work-orders/new">
-          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
+          <Button className="bg-ink hover:bg-ink-hover text-white font-semibold">
             <Plus className="h-4 w-4 mr-2" />
             New Work Order
           </Button>
@@ -58,8 +58,8 @@ export default async function WorkOrdersPage() {
               <Card className="hover:shadow-md transition-shadow cursor-pointer">
                 <CardContent className="flex items-center justify-between py-4">
                   <div className="flex items-center gap-4">
-                    <div className="bg-red-100 rounded-lg p-2">
-                      <ClipboardList className="h-5 w-5 text-red-700" />
+                    <div className="bg-brand-wash rounded-lg p-2">
+                      <ClipboardList className="h-5 w-5 text-brand-ink" />
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">

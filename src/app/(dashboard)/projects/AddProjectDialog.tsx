@@ -110,7 +110,7 @@ export default function AddProjectDialog() {
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+        className="bg-ink hover:bg-ink-hover text-white font-semibold"
       >
         <Plus className="h-4 w-4 mr-2" />
         New Project
@@ -188,7 +188,7 @@ export default function AddProjectDialog() {
                   onClick={() => toggleTrade(val)}
                   className={`text-xs px-3 py-1.5 rounded-full border font-medium transition-colors ${
                     trades.includes(val)
-                      ? 'bg-red-700 border-red-700 text-white'
+                      ? 'bg-ink border-ink text-white'
                       : 'border-gray-200 text-gray-600 hover:border-gray-300'
                   }`}
                 >
@@ -245,7 +245,7 @@ export default function AddProjectDialog() {
             <Button
               type="submit"
               disabled={loading}
-              className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+              className="bg-ink hover:bg-ink-hover text-white font-semibold"
             >
               {loading ? 'Creating...' : 'Create Project'}
             </Button>

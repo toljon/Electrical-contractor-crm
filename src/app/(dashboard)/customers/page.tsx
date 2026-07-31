@@ -22,7 +22,7 @@ export default async function CustomersPage() {
           <p className="text-gray-500 mt-1">Manage your customer accounts</p>
         </div>
         <Link href="/customers/new">
-          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
+          <Button className="bg-ink hover:bg-ink-hover text-white font-semibold">
             <Plus className="h-4 w-4 mr-2" />
             Add Customer
           </Button>
@@ -55,8 +55,8 @@ export default async function CustomersPage() {
                 <Card className="hover:shadow-md transition-shadow cursor-pointer">
                   <CardContent className="flex items-center justify-between py-4">
                     <div className="flex items-start gap-4">
-                      <div className="bg-red-100 rounded-lg p-2 mt-0.5">
-                        <Building2 className="h-5 w-5 text-red-700" />
+                      <div className="bg-brand-wash rounded-lg p-2 mt-0.5">
+                        <Building2 className="h-5 w-5 text-brand-ink" />
                       </div>
                       <div>
                         <div className="font-semibold text-gray-900">{customer.name}</div>

@@ -72,6 +72,7 @@ export default function FindingsPage({
   const [equipment, setEquipment] = useState<EquipmentOption[]>([])
   const [loadingInit, setLoadingInit] = useState(true)
   const [completing, setCompleting] = useState(false)
+  const [genStep, setGenStep] = useState(0)
 
   // Load existing findings and equipment on mount
   useEffect(() => {
@@ -289,6 +290,21 @@ export default function FindingsPage({
     }
   }
 
+  // Summary generation takes 6-10s against the model. A bare spinner for that
+  // long reads as a hang; naming each stage makes the wait legible.
+  useEffect(() => {
+    if (!completing) {
+      setGenStep(0)
+      return
+    }
+    const timers = [
+      setTimeout(() => setGenStep(1), 1200),
+      setTimeout(() => setGenStep(2), 3600),
+      setTimeout(() => setGenStep(3), 6500),
+    ]
+    return () => timers.forEach(clearTimeout)
+  }, [completing])
+
   async function handleCompleteReport() {
     setCompleting(true)
     try {
@@ -374,8 +390,8 @@ export default function FindingsPage({
       </Button>
 
       {/* Complete Report */}
-      <div className="mt-8 bg-gray-900 rounded-xl p-6 text-center">
-        <CheckCircle2 className="h-10 w-10 text-red-500 mx-auto mb-3" />
+      <div className="mt-8 bg-ink rounded-xl p-6 text-center">
+        <CheckCircle2 className="h-10 w-10 text-brand-light mx-auto mb-3" />
         <h2 className="text-lg font-bold text-white mb-1">
           Ready to complete the report?
         </h2>
@@ -386,7 +402,7 @@ export default function FindingsPage({
           onClick={handleCompleteReport}
           disabled={completing}
           size="lg"
-          className="bg-red-700 hover:bg-red-800 text-white font-bold px-8"
+          className="bg-brand hover:bg-brand-dark text-ink font-bold px-8"
         >
           {completing ? (
             <>
@@ -400,6 +416,32 @@ export default function FindingsPage({
             </>
           )}
         </Button>
+        {completing && (
+          <div className="mt-4 max-w-sm mx-auto space-y-1.5 text-left" aria-live="polite">
+            {[
+              'Collecting readings and findings',
+              'Correlating deficiencies against measured performance',
+              'Drafting the executive summary',
+              'Formatting for the client report',
+            ].map((label, i) => (
+              <div
+                key={label}
+                className={`flex items-center gap-2 text-xs transition-colors ${
+                  i <= genStep ? 'text-brand-light' : 'text-gray-500'
+                }`}
+              >
+                {i < genStep ? (
+                  <CheckCircle2 className="h-3.5 w-3.5 shrink-0" />
+                ) : i === genStep ? (
+                  <Loader2 className="h-3.5 w-3.5 shrink-0 animate-spin" />
+                ) : (
+                  <span className="h-3.5 w-3.5 shrink-0 rounded-full border border-current opacity-40" />
+                )}
+                {label}
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   )
@@ -451,7 +493,7 @@ function FindingCard({
               size="sm"
               onClick={() => onSave(idx)}
               disabled={finding.saving}
-              className="bg-red-700 hover:bg-red-800 text-white"
+              className="bg-ink hover:bg-ink-hover text-white"
             >
               <Save className="h-3.5 w-3.5 mr-1" />
               {finding.saving ? 'Saving...' : 'Save'}

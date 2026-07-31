@@ -101,7 +101,7 @@ export default function AddEquipmentDialog({
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+        className="bg-ink hover:bg-ink-hover text-white font-semibold"
       >
         <Plus className="h-4 w-4 mr-2" />
         Add Equipment
@@ -210,7 +210,7 @@ export default function AddEquipmentDialog({
             <Button
               type="submit"
               disabled={loading}
-              className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+              className="bg-ink hover:bg-ink-hover text-white font-semibold"
             >
               {loading ? 'Adding...' : 'Add Equipment'}
             </Button>

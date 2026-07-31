@@ -71,8 +71,8 @@ export default function OnboardingPage() {
     <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         <div className="flex items-center gap-2 justify-center mb-8">
-          <div className="bg-red-700 rounded-lg p-2">
-            <Wrench className="h-6 w-6 text-white" />
+          <div className="bg-brand rounded-lg p-2">
+            <Wrench className="h-6 w-6 text-ink" />
           </div>
           <span className="text-2xl font-bold text-gray-900">TGG Ops</span>
         </div>
@@ -139,7 +139,7 @@ export default function OnboardingPage() {
 
               <Button
                 type="submit"
-                className="w-full bg-red-700 hover:bg-red-800 text-white font-semibold"
+                className="w-full bg-ink hover:bg-ink-hover text-white font-semibold"
                 disabled={loading}
               >
                 {loading ? 'Setting up…' : 'Get started →'}

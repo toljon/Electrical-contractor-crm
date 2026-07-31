@@ -7,8 +7,9 @@ import {
   PROJECT_PHASE_LABELS,
   SEVERITY_LABELS,
 } from '@/types/database'
-import type { AssemblyType, ProjectPhase, FindingSeverity } from '@/types/database'
+import type { ProjectPhase, FindingSeverity } from '@/types/database'
 import { AlertTriangle, AlertCircle, Info, Eye } from 'lucide-react'
+import { getExecMetrics, fmtMoneyCents, fmtUsdExact, COST_MODEL, VARIANCE_THRESHOLD } from '@/lib/metrics'
 
 // Chart ink & series tokens (validated: see dataviz reference palette;
 // series-2 aqua is sub-3:1 on white, relieved by direct value labels)
@@ -23,31 +24,18 @@ const SEVERITY_STATUS: Record<FindingSeverity, { color: string; Icon: typeof Ale
   observation: { color: '#898781', Icon: Eye },
 }
 
-const fmtMoney = (cents: number) => {
-  const d = cents / 100
-  if (d >= 1_000_000) return `$${(d / 1_000_000).toFixed(1)}M`
-  if (d >= 1_000) return `$${Math.round(d / 1_000)}K`
-  return `$${d.toFixed(0)}`
-}
+const fmtMoney = fmtMoneyCents
 
 export default async function InsightsPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const ctx = getEngineContext(user!.id)
   const db = getDb()
-  const org = ctx.orgId
+  const org = ctx.orgId!
 
-  // ── aggregates (direct SQL, org-scoped) ───────────────
-  const hoursByType = db.prepare(`
-    SELECT assembly_type,
-           COUNT(*) AS n,
-           SUM(shop_hours_estimated) AS est,
-           SUM(shop_hours_actual) AS actual
-    FROM prefab_assemblies
-    WHERE org_id = ? AND shop_hours_actual IS NOT NULL AND shop_hours_estimated IS NOT NULL
-    GROUP BY assembly_type
-    ORDER BY est DESC
-  `).all(org) as { assembly_type: AssemblyType; n: number; est: number; actual: number }[]
+  // Shared with the dashboard so both surfaces quote identical figures.
+  const metrics = getExecMetrics(org)
+  const { hoursByType, totalEst, totalActual, variancePct, worstOverrun, bestUnderrun } = metrics
 
   const valueByPhase = db.prepare(`
     SELECT phase, SUM(contract_value_cents) AS value, COUNT(*) AS n
@@ -68,29 +56,16 @@ export default async function InsightsPage() {
     GROUP BY severity
   `).all(org) as { severity: FindingSeverity; n: number }[]
 
-  const backlog = (db.prepare(`
-    SELECT COUNT(*) AS n FROM prefab_assemblies
-    WHERE org_id = ? AND status IN ('modeled','released','in_fabrication','qc')
-  `).get(org) as { n: number }).n
-
-  const activeProjects = db.prepare(`
-    SELECT COUNT(*) AS n, SUM(contract_value_cents) AS value
-    FROM projects WHERE org_id = ? AND phase NOT IN ('closeout','warranty')
-  `).get(org) as { n: number; value: number | null }
+  const { backlog, activeProjects, shipped30 } = metrics
 
   // ── derived series ────────────────────────────────────
   const now = new Date()
   const WEEKS = 8
   const weekCounts = Array.from({ length: WEEKS }, () => 0)
-  const shipped30 = shipped.filter((s) => {
+  for (const s of shipped) {
     const days = (now.getTime() - new Date(s.shipped_at).getTime()) / 86_400_000
     if (days >= 0 && days < WEEKS * 7) weekCounts[WEEKS - 1 - Math.floor(days / 7)]++
-    return days >= 0 && days <= 30
-  }).length
-
-  const totalEst = hoursByType.reduce((s, r) => s + r.est, 0)
-  const totalActual = hoursByType.reduce((s, r) => s + r.actual, 0)
-  const variancePct = totalEst ? Math.round(((totalActual - totalEst) / totalEst) * 100) : 0
+  }
 
   const phaseOrder: ProjectPhase[] = ['pursuit', 'preconstruction', 'coordination', 'fabrication', 'installation', 'commissioning', 'closeout', 'warranty']
   const phaseRows = phaseOrder
@@ -137,7 +112,7 @@ export default async function InsightsPage() {
         <Card>
           <CardContent className="pt-5 pb-4">
             <p className="text-xs text-gray-500 mb-1">Shop hours vs estimate</p>
-            <p className={`text-2xl font-semibold ${variancePct > 5 ? 'text-red-700' : 'text-gray-900'}`}>
+            <p className={`text-2xl font-semibold ${variancePct > 5 ? 'text-amber-800' : 'text-gray-900'}`}>
               {variancePct > 0 ? '+' : ''}{variancePct}%
             </p>
             <p className="text-xs text-gray-500 mt-1">
@@ -167,6 +142,27 @@ export default async function InsightsPage() {
             <p className="text-xs text-gray-400">Completed assemblies only — the dataset that sharpens the next estimate.</p>
           </CardHeader>
           <CardContent>
+            {/* State the conclusion. A chart makes people look; a sentence
+                makes them decide. */}
+            {(worstOverrun || bestUnderrun) && (
+              <div className="mb-5 rounded-lg bg-brand-wash border border-brand/40 px-4 py-3">
+                {worstOverrun && (
+                  <p className="text-sm text-gray-900">
+                    <span className="font-semibold">{worstOverrun.label}</span> is the worst performer at{' '}
+                    <span className="font-semibold text-amber-800">+{worstOverrun.variancePct}%</span> —{' '}
+                    {worstOverrun.hoursOver.toLocaleString()} hours beyond the bid across {worstOverrun.n} units.
+                    Every one of those hours was quoted at a rate that assumed they would not be worked.
+                  </p>
+                )}
+                {bestUnderrun && (
+                  <p className={`text-sm text-gray-700 ${worstOverrun ? 'mt-2' : ''}`}>
+                    <span className="font-semibold">{bestUnderrun.label}</span> runs{' '}
+                    <span className="font-semibold text-green-800">{bestUnderrun.variancePct}%</span> under
+                    estimate across {bestUnderrun.n} units — slack that could be priced more competitively.
+                  </p>
+                )}
+              </div>
+            )}
             <div className="space-y-4">
               {hoursByType.map((r) => (
                 <div key={r.assembly_type} title={`${ASSEMBLY_TYPE_LABELS[r.assembly_type]}: ${Math.round(r.est)}h estimated, ${Math.round(r.actual)}h actual (${r.n} assemblies)`}>
@@ -189,8 +185,17 @@ export default async function InsightsPage() {
                       />
                       <span className="text-xs text-gray-500 tabular-nums">
                         {Math.round(r.actual)}h
-                        {r.actual > r.est * 1.05 && (
-                          <span className="text-red-700 ml-1">+{Math.round(((r.actual - r.est) / r.est) * 100)}%</span>
+                        {/* Under-runs are as informative as over-runs: one says
+                            the bid is too thin, the other that it is too fat. */}
+                        {r.actual > r.est * (1 + VARIANCE_THRESHOLD) && (
+                          <span className="text-amber-800 ml-1 font-medium">
+                            +{Math.round(((r.actual - r.est) / r.est) * 100)}%
+                          </span>
+                        )}
+                        {r.actual < r.est * (1 - VARIANCE_THRESHOLD) && (
+                          <span className="text-green-800 ml-1 font-medium">
+                            {Math.round(((r.actual - r.est) / r.est) * 100)}%
+                          </span>
                         )}
                       </span>
                     </div>
@@ -266,6 +271,23 @@ export default async function InsightsPage() {
             <p className="text-xs text-gray-400">Deficiencies awaiting quote or repair — each is a service revenue lead.</p>
           </CardHeader>
           <CardContent>
+            {/* The commercial consequence of leaving these open. Every number
+                here is modelled from stated rates, not from TGG's books — the
+                assumption is printed alongside so it cannot be mistaken. */}
+            {metrics.openCritical > 0 && (
+              <div className="mb-5 rounded-lg bg-brand-wash border border-brand/40 px-4 py-3">
+                <p className="text-sm text-gray-900">
+                  <span className="font-semibold">{metrics.openCritical}</span> critical or major findings are
+                  open. Run to failure instead of repaired on schedule, they carry a modelled{' '}
+                  <span className="font-semibold">{fmtUsdExact(metrics.exposureUsd)}</span> of avoidable cost.
+                </p>
+                <p className="text-xs text-gray-500 mt-1">
+                  Modelled at {fmtUsdExact(COST_MODEL.emergencyRepairUsd)} for an emergency repair against{' '}
+                  {fmtUsdExact(COST_MODEL.plannedRepairUsd)} planned — illustrative rates, not TG Gallagher
+                  figures. The point is the multiple, not the dollar.
+                </p>
+              </div>
+            )}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {severityOrder.map((sev) => {
                 const n = findingsBySeverity.find((r) => r.severity === sev)?.n ?? 0
