@@ -2,6 +2,7 @@ import { redirect } from 'next/navigation'
 import { Sidebar } from '@/components/layout/Sidebar'
 import { createClient } from '@/lib/supabase/server'
 import { shouldRedirectToOnboarding } from '@/lib/auth'
+import { demoMode } from '@/lib/demo'
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
@@ -20,7 +21,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-screen bg-gray-50">
-      <Sidebar />
+      <Sidebar demo={demoMode()} />
       <main className="flex-1 overflow-auto pt-14 md:pt-0">
         {children}
       </main>

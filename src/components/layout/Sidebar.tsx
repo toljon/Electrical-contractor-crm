@@ -23,14 +23,24 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
-function Logo() {
+function Logo({ demo }: { demo?: boolean }) {
   return (
     <div className="flex items-center gap-2">
       <div className="bg-red-700 rounded p-1.5">
         <Wrench className="h-4 w-4 text-white" />
       </div>
       <div>
-        <span className="font-bold text-white text-lg leading-none">TGG Ops</span>
+        <div className="flex items-center gap-1.5">
+          <span className="font-bold text-white text-lg leading-none">TGG Ops</span>
+          {demo && (
+            <span
+              title="Sample dataset — client and project names are from TG Gallagher's published portfolio; all readings, findings and hours are illustrative."
+              className="text-[9px] uppercase tracking-wide font-semibold text-amber-300/90 border border-amber-400/40 rounded px-1 py-px leading-none"
+            >
+              Demo data
+            </span>
+          )}
+        </div>
         <p className="text-[10px] text-gray-500 leading-tight">TG Gallagher · Waltham, MA</p>
       </div>
     </div>
@@ -60,7 +70,7 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
   )
 }
 
-export function Sidebar() {
+export function Sidebar({ demo = false }: { demo?: boolean }) {
   const pathname = usePathname()
   const router = useRouter()
   const [mobileOpen, setMobileOpen] = useState(false)
@@ -86,7 +96,7 @@ export function Sidebar() {
       {/* Desktop sidebar */}
       <aside className="hidden md:flex w-60 bg-gray-900 min-h-screen flex-col shrink-0">
         <div className="p-4 border-b border-gray-800">
-          <Logo />
+          <Logo demo={demo} />
         </div>
         <NavLinks pathname={pathname} />
         <div className="p-3 border-t border-gray-800">{signOutButton}</div>
@@ -94,7 +104,7 @@ export function Sidebar() {
 
       {/* Mobile top bar */}
       <div className="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-gray-900 flex items-center justify-between px-4">
-        <Logo />
+        <Logo demo={demo} />
         <button
           onClick={() => setMobileOpen(true)}
           aria-label="Open navigation menu"
@@ -114,7 +124,7 @@ export function Sidebar() {
           />
           <aside className="absolute inset-y-0 left-0 w-64 bg-gray-900 flex flex-col shadow-xl">
             <div className="p-4 border-b border-gray-800 flex items-center justify-between">
-              <Logo />
+              <Logo demo={demo} />
               <button
                 onClick={() => setMobileOpen(false)}
                 aria-label="Close navigation menu"
