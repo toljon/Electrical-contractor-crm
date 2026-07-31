@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Wrench, Database } from 'lucide-react'
+import { Wrench } from 'lucide-react'
+import { demoMode } from '@/lib/demo'
 
 export default async function SettingsPage() {
   const supabase = await createClient()
@@ -32,11 +33,6 @@ export default async function SettingsPage() {
             <span className="text-gray-500">Role</span>
             <Badge variant="outline">{profile?.role ?? 'technician'}</Badge>
           </div>
-          <Separator />
-          <div className="flex justify-between text-sm">
-            <span className="text-gray-500">User ID</span>
-            <span className="font-mono text-xs text-gray-400">{user?.id}</span>
-          </div>
         </CardContent>
       </Card>
 
@@ -63,34 +59,26 @@ export default async function SettingsPage() {
             <span className="text-gray-500">PDF Generation</span>
             <Badge className="bg-green-100 text-green-700">Active</Badge>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Storage info */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Database className="h-4 w-4 text-gray-500" />
-            <CardTitle className="text-base">Data & Storage</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="text-sm space-y-3">
-          <div className="flex justify-between">
-            <span className="text-gray-500">Database</span>
-            <span>Embedded SQLite — <span className="font-mono text-xs bg-gray-100 px-1 rounded">data/tgg-ops.db</span></span>
-          </div>
           <Separator />
           <div className="flex justify-between">
-            <span className="text-gray-500">Photo storage</span>
-            <span className="font-mono text-xs bg-gray-100 px-1 rounded self-center">data/uploads/</span>
+            <span className="text-gray-500">AI Executive Summaries</span>
+            {process.env.ANTHROPIC_API_KEY ? (
+              <Badge className="bg-green-100 text-green-700">Active</Badge>
+            ) : (
+              <Badge variant="outline" className="text-gray-500">Not configured</Badge>
+            )}
           </div>
-          <Separator />
-          <p className="text-gray-500">
-            This version runs fully self-contained — no external database service required.
-            Back up the <span className="font-mono text-xs bg-gray-100 px-1 rounded">data/</span> directory
-            to preserve all records. A hosted Supabase migration path is documented in{' '}
-            <span className="font-mono text-xs bg-gray-100 px-1 rounded">docs/SUPABASE_SETUP.md</span>.
-          </p>
+          {demoMode() && (
+            <>
+              <Separator />
+              <div className="flex justify-between">
+                <span className="text-gray-500">Dataset</span>
+                <span className="text-gray-600">
+                  Demo — sample records, not live service data
+                </span>
+              </div>
+            </>
+          )}
         </CardContent>
       </Card>
     </div>
