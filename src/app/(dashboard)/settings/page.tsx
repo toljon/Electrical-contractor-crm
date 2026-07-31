@@ -40,7 +40,7 @@ export default async function SettingsPage() {
       <Card className="mb-6">
         <CardHeader>
           <div className="flex items-center gap-2">
-            <Wrench className="h-4 w-4 text-red-700" />
+            <Wrench className="h-4 w-4 text-brand-ink" />
             <CardTitle className="text-base">TGG Ops Platform</CardTitle>
           </div>
         </CardHeader>

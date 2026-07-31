@@ -26,8 +26,8 @@ const navItems = [
 function Logo({ demo }: { demo?: boolean }) {
   return (
     <div className="flex items-center gap-2">
-      <div className="bg-red-700 rounded p-1.5">
-        <Wrench className="h-4 w-4 text-white" />
+      <div className="bg-brand rounded p-1.5">
+        <Wrench className="h-4 w-4 text-ink" />
       </div>
       <div>
         <div className="flex items-center gap-1.5">
@@ -58,8 +58,8 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate?: () 
           className={cn(
             'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
             pathname.startsWith(href)
-              ? 'bg-red-700 text-white'
-              : 'text-gray-400 hover:bg-gray-800 hover:text-white'
+              ? 'bg-brand text-ink'
+              : 'text-gray-400 hover:bg-white/10 hover:text-white'
           )}
         >
           <Icon className="h-4 w-4" />
@@ -84,7 +84,7 @@ export function Sidebar({ demo = false }: { demo?: boolean }) {
   const signOutButton = (
     <button
       onClick={handleSignOut}
-      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white w-full transition-colors"
+      className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white w-full transition-colors"
     >
       <LogOut className="h-4 w-4" />
       Sign out
@@ -94,7 +94,7 @@ export function Sidebar({ demo = false }: { demo?: boolean }) {
   return (
     <>
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-60 bg-gray-900 min-h-screen flex-col shrink-0">
+      <aside className="hidden md:flex w-60 bg-ink min-h-screen flex-col shrink-0">
         <div className="p-4 border-b border-gray-800">
           <Logo demo={demo} />
         </div>
@@ -103,7 +103,7 @@ export function Sidebar({ demo = false }: { demo?: boolean }) {
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-gray-900 flex items-center justify-between px-4">
+      <div className="md:hidden fixed top-0 inset-x-0 z-40 h-14 bg-ink flex items-center justify-between px-4">
         <Logo demo={demo} />
         <button
           onClick={() => setMobileOpen(true)}
@@ -122,7 +122,7 @@ export function Sidebar({ demo = false }: { demo?: boolean }) {
             onClick={() => setMobileOpen(false)}
             aria-hidden
           />
-          <aside className="absolute inset-y-0 left-0 w-64 bg-gray-900 flex flex-col shadow-xl">
+          <aside className="absolute inset-y-0 left-0 w-64 bg-ink flex flex-col shadow-xl">
             <div className="p-4 border-b border-gray-800 flex items-center justify-between">
               <Logo demo={demo} />
               <button

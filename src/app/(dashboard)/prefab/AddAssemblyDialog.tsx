@@ -155,7 +155,7 @@ export default function AddAssemblyDialog() {
     <>
       <Button
         onClick={() => setOpen(true)}
-        className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+        className="bg-ink hover:bg-ink-hover text-white font-semibold"
       >
         <Plus className="h-4 w-4 mr-2" />
         New Assembly
@@ -272,7 +272,7 @@ export default function AddAssemblyDialog() {
                 <button
                   type="button"
                   onClick={() => setShopHoursEstimated(String(hoursSuggestion.median))}
-                  className="text-xs text-red-700 hover:underline text-left"
+                  className="text-xs text-brand-ink hover:underline text-left"
                 >
                   Shop median: {hoursSuggestion.median}h across {hoursSuggestion.n} completed —
                   use it
@@ -296,7 +296,7 @@ export default function AddAssemblyDialog() {
             <Button
               type="submit"
               disabled={loading}
-              className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+              className="bg-ink hover:bg-ink-hover text-white font-semibold"
             >
               {loading ? 'Adding...' : 'Add Assembly'}
             </Button>

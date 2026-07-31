@@ -98,7 +98,7 @@ export default async function ProjectsPage() {
                       href={p.bim_model_url}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-red-700 hover:underline text-xs font-medium"
+                      className="text-brand-ink hover:underline text-xs font-medium"
                     >
                       BIM Model ↗
                     </a>

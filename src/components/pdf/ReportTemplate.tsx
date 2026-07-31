@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   page: {
     fontFamily: 'Helvetica',
     fontSize: 10,
-    color: '#111827',
+    color: '#32363b',
     padding: 48,
     lineHeight: 1.4,
   },
@@ -25,12 +25,12 @@ const styles = StyleSheet.create({
     marginBottom: 32,
     paddingBottom: 20,
     borderBottomWidth: 3,
-    borderBottomColor: '#b91c1c',
+    borderBottomColor: '#b89b31',
   },
   logoText: {
     fontSize: 20,
     fontFamily: 'Helvetica-Bold',
-    color: '#111827',
+    color: '#32363b',
   },
   headerRight: {
     alignItems: 'flex-end',
@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
   coverTitle: {
     fontSize: 16,
     fontFamily: 'Helvetica-Bold',
-    color: '#111827',
+    color: '#32363b',
     marginBottom: 4,
   },
   coverSubtitle: {
@@ -79,13 +79,13 @@ const styles = StyleSheet.create({
   },
   coverValue: {
     fontSize: 10,
-    color: '#111827',
+    color: '#32363b',
     fontFamily: 'Helvetica-Bold',
   },
   sectionHeader: {
     fontSize: 11,
     fontFamily: 'Helvetica-Bold',
-    color: '#111827',
+    color: '#32363b',
     marginTop: 24,
     marginBottom: 10,
     paddingBottom: 4,
@@ -108,7 +108,7 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    backgroundColor: '#111827',
+    backgroundColor: '#32363b',
     borderRadius: 4,
     marginBottom: 1,
   },
@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   assetName: {
     fontSize: 10,
     fontFamily: 'Helvetica-Bold',
-    color: '#111827',
+    color: '#32363b',
   },
   assetMeta: {
     fontSize: 8,
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   findingDesc: {
     fontSize: 9,
-    color: '#111827',
+    color: '#32363b',
     marginBottom: 4,
   },
   findingRec: {

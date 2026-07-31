@@ -4,10 +4,28 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* TG Gallagher brand palette.
+   Sampled from their own theme CSS and logo mark at tggallagher.com:
+   gold #B89B31 (logo fill, 29 uses) on charcoal #32363B (37 uses), set in Montserrat.
+
+   Gold is an accent, not a text colour: #B89B31 on white is only 2.70:1, which
+   fails AA for body text and even the 3:1 graphic threshold. Charcoal carries
+   text and primary surfaces (12.16:1 on white); --color-brand-ink is the
+   darkened gold used wherever gold-tinted text sits on white (5.42:1). */
+@theme {
+  --color-brand: #b89b31;
+  --color-brand-light: #e8c752;
+  --color-brand-dark: #9a8228;
+  --color-brand-ink: #7d6820;
+  --color-brand-wash: #f7f2e0;
+  --color-ink: #32363b;
+  --color-ink-hover: #23262a;
+}
+
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-sans);
+  --font-sans: var(--font-montserrat), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono);
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);

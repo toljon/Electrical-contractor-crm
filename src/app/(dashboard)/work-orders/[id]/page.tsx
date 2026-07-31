@@ -216,7 +216,7 @@ export default async function WorkOrderDetailPage({
             <Link href={`/reports/new?workOrderId=${id}`}>
               <Button
                 size="sm"
-                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+                className="bg-ink hover:bg-ink-hover text-white font-semibold"
               >
                 <Plus className="h-3.5 w-3.5 mr-1.5" />
                 Start Inspection
@@ -234,7 +234,7 @@ export default async function WorkOrderDetailPage({
                   {' '}
                   <Link
                     href={`/reports/new?workOrderId=${id}`}
-                    className="text-red-700 hover:underline"
+                    className="text-brand-ink hover:underline"
                   >
                     Start an inspection
                   </Link>

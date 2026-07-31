@@ -38,8 +38,8 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
       <div className="flex items-start justify-between mb-8">
         <div>
           <div className="flex items-center gap-3">
-            <div className="bg-red-100 rounded-lg p-2">
-              <Building2 className="h-6 w-6 text-red-700" />
+            <div className="bg-brand-wash rounded-lg p-2">
+              <Building2 className="h-6 w-6 text-brand-ink" />
             </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{customer.name}</h1>
@@ -63,7 +63,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
           </div>
         </div>
         <Link href={`/work-orders/new?customerId=${id}`}>
-          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
+          <Button className="bg-ink hover:bg-ink-hover text-white font-semibold">
             <Plus className="h-4 w-4 mr-2" />
             New Work Order
           </Button>
@@ -124,7 +124,7 @@ export default async function CustomerDetailPage({ params }: { params: Promise<{
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-3">
             <CardTitle className="text-base">Recent Work Orders</CardTitle>
-            <Link href={`/work-orders?customerId=${id}`} className="text-sm text-red-700 hover:underline">
+            <Link href={`/work-orders?customerId=${id}`} className="text-sm text-brand-ink hover:underline">
               View all
             </Link>
           </CardHeader>

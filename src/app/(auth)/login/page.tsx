@@ -52,8 +52,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="bg-red-700 rounded-lg p-2">
-            <Wrench className="h-6 w-6 text-white" />
+          <div className="bg-brand rounded-lg p-2">
+            <Wrench className="h-6 w-6 text-ink" />
           </div>
           <span className="text-2xl font-bold text-gray-900">TGG Ops</span>
         </div>
@@ -114,7 +114,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setIsSignUp(!isSignUp)}
-                className="text-red-700 hover:underline font-medium"
+                className="text-brand-ink hover:underline font-medium"
               >
                 {isSignUp ? 'Sign in' : 'Sign up'}
               </button>

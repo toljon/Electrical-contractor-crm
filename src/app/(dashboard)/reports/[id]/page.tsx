@@ -78,7 +78,7 @@ export default async function ReportDetailPage({
           </div>
         </div>
         <a href={`/api/reports/${id}/pdf`}>
-          <Button className="bg-red-700 hover:bg-red-800 text-white font-semibold">
+          <Button className="bg-ink hover:bg-ink-hover text-white font-semibold">
             <FileDown className="h-4 w-4 mr-2" />
             Download PDF
           </Button>
@@ -153,10 +153,10 @@ export default async function ReportDetailPage({
       {/* Navigation */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <Link href={`/reports/${id}/readings`}>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-red-200 hover:border-red-400">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-brand/30 hover:border-brand">
             <CardContent className="py-6 flex items-center gap-4">
-              <div className="bg-red-50 rounded-lg p-3">
-                <ClipboardList className="h-6 w-6 text-red-700" />
+              <div className="bg-brand-wash rounded-lg p-3">
+                <ClipboardList className="h-6 w-6 text-brand-ink" />
               </div>
               <div>
                 <div className="font-semibold text-gray-900">
@@ -171,10 +171,10 @@ export default async function ReportDetailPage({
         </Link>
 
         <Link href={`/reports/${id}/findings`}>
-          <Card className="hover:shadow-md transition-shadow cursor-pointer border-red-200 hover:border-red-400">
+          <Card className="hover:shadow-md transition-shadow cursor-pointer border-brand/30 hover:border-brand">
             <CardContent className="py-6 flex items-center gap-4">
-              <div className="bg-red-50 rounded-lg p-3">
-                <AlertTriangle className="h-6 w-6 text-red-700" />
+              <div className="bg-brand-wash rounded-lg p-3">
+                <AlertTriangle className="h-6 w-6 text-brand-ink" />
               </div>
               <div>
                 <div className="font-semibold text-gray-900">Findings</div>

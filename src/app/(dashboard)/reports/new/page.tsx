@@ -304,7 +304,7 @@ function NewReportForm() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="bg-red-700 hover:bg-red-800 text-white font-semibold"
+                className="bg-ink hover:bg-ink-hover text-white font-semibold"
               >
                 {loading ? 'Creating...' : 'Create Report & Add Readings'}
               </Button>
