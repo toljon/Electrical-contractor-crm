@@ -105,7 +105,12 @@ export default function AddAssemblyDialog() {
     setLoading(true)
 
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
+    if (!user) {
+      toast.error('Your session has expired — please sign in again')
+      setLoading(false)
+      router.push('/login')
+      return
+    }
 
     const { data: profile } = await supabase
       .from('profiles')

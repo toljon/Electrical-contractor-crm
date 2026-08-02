@@ -8,18 +8,30 @@ import type { WorkOrderStatus, DbRow } from '@/types/database'
 import { getEngineContext } from '@/lib/localdb/auth'
 import { getExecMetrics, fmtMoneyCents, fmtUsdExact, COST_MODEL } from '@/lib/metrics'
 
+// scheduled_date is written from a local <input type="date">, so the day
+// boundary that decides "today" has to be the contractor's, not UTC's or
+// whatever the server happens to be set to.
+const BUSINESS_TIME_ZONE = 'America/New_York'
+
 export default async function DashboardPage() {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
   const metrics = getExecMetrics(getEngineContext(user!.id).orgId!)
 
-  const today = new Date().toISOString().split('T')[0]
+  const now = new Date()
+  const today = new Intl.DateTimeFormat('en-CA', { timeZone: BUSINESS_TIME_ZONE }).format(now)
+  const todayLabel = new Intl.DateTimeFormat('en-US', {
+    timeZone: BUSINESS_TIME_ZONE,
+    weekday: 'long',
+    month: 'long',
+    day: 'numeric',
+  }).format(now)
 
   const [
-    { data: todayJobs },
-    { count: openFindings },
-    { count: completedThisMonth },
-    { data: recentWorkOrders },
+    { data: todayJobs, error: todayJobsError },
+    { count: openFindings, error: findingsError },
+    { count: completedThisMonth, error: completedError },
+    { data: recentWorkOrders, error: recentWorkOrdersError },
   ] = await Promise.all([
     supabase
       .from('work_orders')
@@ -48,9 +60,7 @@ export default async function DashboardPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-500 mt-1">
-            {new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
-          </p>
+          <p className="text-gray-500 mt-1">{todayLabel}</p>
         </div>
         <Link href="/work-orders/new">
           <Button className="bg-ink hover:bg-ink-hover text-white font-semibold">
@@ -126,7 +136,10 @@ export default async function DashboardPage() {
             <Clock className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{todayJobs?.length ?? 0}</div>
+            <div className="text-2xl font-bold">{todayJobsError ? '—' : todayJobs?.length ?? 0}</div>
+            {todayJobsError && (
+              <p className="text-xs text-red-700 mt-1">Could not load today&apos;s schedule.</p>
+            )}
           </CardContent>
         </Card>
         <Card>
@@ -135,7 +148,10 @@ export default async function DashboardPage() {
             <AlertTriangle className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">{openFindings ?? 0}</div>
+            <div className="text-2xl font-bold text-orange-600">{findingsError ? '—' : openFindings ?? 0}</div>
+            {findingsError && (
+              <p className="text-xs text-red-700 mt-1">Could not load open deficiencies.</p>
+            )}
             {metrics.openCritical > 0 && (
               <p className="text-xs text-gray-500 mt-1">
                 {metrics.openCritical} critical or major · {fmtUsdExact(metrics.exposureUsd)} modelled exposure
@@ -153,7 +169,10 @@ export default async function DashboardPage() {
             <CheckCircle className="h-4 w-4 text-gray-400" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-green-600">{completedThisMonth ?? 0}</div>
+            <div className="text-2xl font-bold text-green-600">{completedError ? '—' : completedThisMonth ?? 0}</div>
+            {completedError && (
+              <p className="text-xs text-red-700 mt-1">Could not load completed work orders.</p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -164,7 +183,15 @@ export default async function DashboardPage() {
           <Link href="/work-orders" className="text-sm text-brand-ink hover:underline">View all</Link>
         </CardHeader>
         <CardContent>
-          {!recentWorkOrders?.length ? (
+          {recentWorkOrdersError ? (
+            <div className="text-center py-12">
+              <AlertTriangle className="h-12 w-12 text-red-300 mx-auto mb-4" />
+              <p className="font-medium text-gray-900 mb-1">Work orders could not be loaded.</p>
+              <p className="text-sm text-gray-500">
+                This is a load failure, not an empty list — refresh to try again. ({recentWorkOrdersError.message})
+              </p>
+            </div>
+          ) : !recentWorkOrders?.length ? (
             <div className="text-center py-12">
               <ClipboardList className="h-12 w-12 text-gray-200 mx-auto mb-4" />
               <p className="text-gray-500 mb-4">No work orders yet.</p>

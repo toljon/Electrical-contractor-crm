@@ -40,6 +40,13 @@ export default async function ReportDetailPage({
     order_number: string | null
   } | null
   const reportType = report.report_type as ReportType | null
+  const conditions = [
+    report.ambient_temp_f != null ? `${report.ambient_temp_f}°F` : null,
+    report.humidity_pct != null ? `${report.humidity_pct}% RH` : null,
+    report.weather_conditions,
+  ]
+    .filter(Boolean)
+    .join(', ')
 
   return (
     <div className="p-4 md:p-8 max-w-5xl">
@@ -122,8 +129,8 @@ export default async function ReportDetailPage({
             </CardTitle>
           </CardHeader>
           <CardContent>
-            {report.notes ? (
-              <p className="text-sm text-gray-700">{report.notes}</p>
+            {conditions ? (
+              <p className="text-sm text-gray-700">{conditions}</p>
             ) : (
               <p className="text-sm text-gray-400">No conditions recorded</p>
             )}

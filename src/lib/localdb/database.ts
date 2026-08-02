@@ -33,10 +33,15 @@ export function getDb(): Database.Database {
   const db = new Database(path.join(DATA_DIR, 'tgg-ops.db'))
   db.pragma('journal_mode = WAL')
   db.pragma('foreign_keys = ON')
+  // Without this, a second writer (the seed script, another worker) fails
+  // immediately with SQLITE_BUSY rather than waiting its turn.
+  db.pragma('busy_timeout = 5000')
   db.exec(SCHEMA)
   // Demo mode: a brand-new database auto-seeds the deterministic TGG demo
   // dataset (fixed IDs, so independently seeded serverless replicas agree).
-  if (demoMode() || process.env.TGG_DEMO_SEED === '1' || process.env.VERCEL) {
+  // Deliberately NOT keyed on VERCEL: a real deployment that turns demo mode
+  // off must not get accounts whose shared password is published in the README.
+  if (demoMode() || process.env.TGG_DEMO_SEED === '1') {
     const { c } = db.prepare('SELECT COUNT(*) AS c FROM users').get() as { c: number }
     if (c === 0) seedDemo(db)
   }
@@ -48,6 +53,7 @@ export function getDb(): Database.Database {
 export function createTestDb(): Database.Database {
   const db = new Database(':memory:')
   db.pragma('foreign_keys = ON')
+  db.pragma('busy_timeout = 5000')
   db.exec(SCHEMA)
   return db
 }

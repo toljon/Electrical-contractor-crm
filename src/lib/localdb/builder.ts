@@ -91,11 +91,13 @@ export class QueryBuilder implements PromiseLike<BuilderResult> {
 
   single() {
     this.q.single = true
+    this.q.singleMode = 'strict'
     return this
   }
 
   maybeSingle() {
     this.q.single = true
+    this.q.singleMode = 'maybe'
     return this
   }
 

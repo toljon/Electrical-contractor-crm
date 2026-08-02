@@ -5,7 +5,7 @@ import { createSessionToken, SESSION_COOKIE, SESSION_COOKIE_OPTIONS } from '@/li
 export async function POST(request: NextRequest) {
   const { email, password } = await request.json().catch(() => ({}))
 
-  if (!email || !password) {
+  if (typeof email !== 'string' || typeof password !== 'string' || !email || !password) {
     return NextResponse.json({ error: 'Email and password are required' }, { status: 400 })
   }
 

@@ -154,17 +154,18 @@ export default function ReadingsPage({
     )
   }
 
-  function removeReading(eqIdx: number, rIdx: number) {
+  async function removeReading(eqIdx: number, rIdx: number) {
     const reading = equipmentList[eqIdx].readings[rIdx]
     if (reading.id) {
       // Delete from DB
-      supabase
+      const { error } = await supabase
         .from('test_readings')
         .delete()
         .eq('id', reading.id)
-        .then(({ error }) => {
-          if (error) toast.error(error.message)
-        })
+      if (error) {
+        toast.error(error.message)
+        return
+      }
     }
     setEquipmentList((prev) =>
       prev.map((item, i) => {
@@ -193,13 +194,22 @@ export default function ReadingsPage({
 
     const orgId = report?.org_id
 
+    let skipped = 0
+    let attempted = 0
+    let failed = 0
+    let firstError = ''
+
     for (let rIdx = 0; rIdx < item.readings.length; rIdx++) {
       const reading = item.readings[rIdx]
-      if (!reading.parameter.trim()) continue
+      if (!reading.parameter.trim()) {
+        skipped++
+        continue
+      }
+      attempted++
 
       if (reading.id) {
         // Update
-        await supabase
+        const { error } = await supabase
           .from('test_readings')
           .update({
             parameter: reading.parameter,
@@ -209,9 +219,14 @@ export default function ReadingsPage({
             sort_order: rIdx,
           })
           .eq('id', reading.id)
+
+        if (error) {
+          failed++
+          firstError = firstError || error.message
+        }
       } else {
         // Insert
-        const { data: rd } = await supabase
+        const { data: rd, error } = await supabase
           .from('test_readings')
           .insert({
             org_id: orgId,
@@ -226,7 +241,10 @@ export default function ReadingsPage({
           .select()
           .single()
 
-        if (rd) {
+        if (error || !rd) {
+          failed++
+          firstError = firstError || error?.message || 'Insert failed'
+        } else {
           setEquipmentList((prev) =>
             prev.map((it, i) => {
               if (i !== eqIdx) return it
@@ -245,7 +263,22 @@ export default function ReadingsPage({
     setEquipmentList((prev) =>
       prev.map((it, i) => (i === eqIdx ? { ...it, saving: false } : it))
     )
-    toast.success(`Readings saved for ${item.equipment.name}`)
+
+    if (failed > 0) {
+      toast.error(
+        `${failed} of ${attempted} readings failed to save for ${item.equipment.name}: ${firstError}`
+      )
+    } else if (attempted > 0 || item.readings.length === 0) {
+      toast.success(`Readings saved for ${item.equipment.name}`)
+    }
+
+    if (skipped > 0) {
+      toast.warning(
+        `${skipped} reading${skipped === 1 ? '' : 's'} with no parameter ${
+          skipped === 1 ? 'was' : 'were'
+        } not saved`
+      )
+    }
   }
 
   if (loadingInit) {
@@ -433,6 +466,7 @@ export default function ReadingsPage({
                             <td className="py-1">
                               <button
                                 type="button"
+                                aria-label="Delete reading"
                                 onClick={() => removeReading(eqIdx, rIdx)}
                                 className="text-gray-300 hover:text-red-500 transition-colors"
                               >

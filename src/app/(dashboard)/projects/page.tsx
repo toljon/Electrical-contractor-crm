@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Building2 } from 'lucide-react'
+import { Building2, AlertTriangle } from 'lucide-react'
 import {
   PROJECT_PHASE_LABELS,
   PROJECT_PHASE_COLORS,
@@ -22,7 +22,7 @@ function formatValue(cents: number | null) {
 
 export default async function ProjectsPage() {
   const supabase = await createClient()
-  const { data: projects } = await supabase
+  const { data: projects, error } = await supabase
     .from('projects')
     .select('*')
     .order('created_at', { ascending: false })
@@ -39,7 +39,17 @@ export default async function ProjectsPage() {
         <AddProjectDialog />
       </div>
 
-      {!projects?.length ? (
+      {error ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <AlertTriangle className="h-12 w-12 text-red-300 mx-auto mb-4" />
+            <p className="font-medium text-gray-900 mb-1">Projects could not be loaded.</p>
+            <p className="text-sm text-gray-500">
+              This is a load failure, not an empty list — refresh to try again. ({error.message})
+            </p>
+          </CardContent>
+        </Card>
+      ) : !projects?.length ? (
         <Card>
           <CardContent className="py-16 text-center">
             <Building2 className="h-12 w-12 text-gray-200 mx-auto mb-4" />

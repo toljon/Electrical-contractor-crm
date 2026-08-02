@@ -7,7 +7,10 @@ import { demoMode } from '@/lib/demo'
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect('/login')
+  // A signed cookie whose user row no longer exists (reseeded database, or a
+  // serverless replica that never saw the signup) still verifies, so the
+  // marker tells /login to clear it instead of bouncing back here.
+  if (!user) redirect('/login?expired=1')
 
   const { data: profile } = await supabase
     .from('profiles')

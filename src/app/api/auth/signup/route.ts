@@ -15,7 +15,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'An account with this email already exists' }, { status: 409 })
   }
 
-  const user = createUser(email, password, full_name ?? null)
+  // full_name reaches a SQLite bind, which rejects anything but a primitive.
+  const fullName = typeof full_name === 'string' ? full_name.trim().slice(0, 200) || null : null
+
+  const user = createUser(email, password, fullName)
   const response = NextResponse.json({ user: toAuthUser(user) })
   response.cookies.set(SESSION_COOKIE, await createSessionToken(user.id), SESSION_COOKIE_OPTIONS)
   return response

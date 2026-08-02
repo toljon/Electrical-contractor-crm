@@ -1,11 +1,25 @@
 // Signed session cookies, verifiable in both Node and Edge (middleware)
 // runtimes via Web Crypto. Format: <userId>.<expiresMs>.<hmacHex>
+import { demoMode } from '@/lib/demo'
 
 export const SESSION_COOKIE = 'tgg_session'
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 30 // 30 days
 
+const DEV_SECRET = 'tgg-ops-local-dev-secret-change-in-prod'
+
 function secret(): string {
-  return process.env.SESSION_SECRET ?? 'tgg-ops-local-dev-secret-change-in-prod'
+  const configured = process.env.SESSION_SECRET
+  if (configured) return configured
+  // The fallback is published in this repository, so anyone could mint a cookie
+  // for any user id. That is harmless while demo mode is on — /api/auth/demo
+  // hands the same session to any visitor anyway — but with real logins enabled
+  // it is a silent authentication bypass, so refuse to run instead.
+  if (process.env.NODE_ENV === 'production' && !demoMode()) {
+    throw new Error(
+      'SESSION_SECRET must be set when TGG_DEMO_MODE is off in production.'
+    )
+  }
+  return DEV_SECRET
 }
 
 async function hmac(payload: string): Promise<string> {
@@ -49,6 +63,7 @@ export async function verifySessionToken(token: string | undefined): Promise<str
 export const SESSION_COOKIE_OPTIONS = {
   httpOnly: true,
   sameSite: 'lax' as const,
+  secure: process.env.NODE_ENV === 'production',
   path: '/',
   maxAge: SESSION_TTL_MS / 1000,
 }

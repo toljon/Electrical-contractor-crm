@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Boxes } from 'lucide-react'
+import { Boxes, AlertTriangle } from 'lucide-react'
 import {
   ASSEMBLY_TYPE_LABELS,
   ASSEMBLY_STATUS_LABELS,
@@ -19,7 +19,7 @@ const PIPELINE: AssemblyStatus[] = ['modeled', 'released', 'in_fabrication', 'qc
 
 export default async function PrefabPage() {
   const supabase = await createClient()
-  const { data: assemblies } = await supabase
+  const { data: assemblies, error } = await supabase
     .from('prefab_assemblies')
     .select('*, project:projects(name, project_number)')
     .order('created_at', { ascending: false })
@@ -51,13 +51,23 @@ export default async function PrefabPage() {
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
-              <div className="text-2xl font-bold">{counts.get(s) ?? 0}</div>
+              <div className="text-2xl font-bold">{error ? '—' : counts.get(s) ?? 0}</div>
             </CardContent>
           </Card>
         ))}
       </div>
 
-      {!assemblies?.length ? (
+      {error ? (
+        <Card>
+          <CardContent className="py-16 text-center">
+            <AlertTriangle className="h-12 w-12 text-red-300 mx-auto mb-4" />
+            <p className="font-medium text-gray-900 mb-1">Prefab assemblies could not be loaded.</p>
+            <p className="text-sm text-gray-500">
+              This is a load failure, not an empty shop — refresh to try again. ({error.message})
+            </p>
+          </CardContent>
+        </Card>
+      ) : !assemblies?.length ? (
         <Card>
           <CardContent className="py-16 text-center">
             <Boxes className="h-12 w-12 text-gray-200 mx-auto mb-4" />
