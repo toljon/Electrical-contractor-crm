@@ -122,7 +122,11 @@ describe('localdb engine', () => {
     expect((insert.data as { trades: string[] }).trades).toEqual(['hvac', 'plumbing'])
   })
 
-  it('allows onboarding flow: org insert then own-profile org link', () => {
+  // Onboarding used to run through this engine, which meant org_id and role had
+  // to stay client-writable — and so any user could move themselves into any
+  // organization. Both writes now belong to POST /api/onboarding, which can
+  // check the caller has no org yet and do the pair in one transaction.
+  it('refuses the client-driven onboarding writes it used to allow', () => {
     const noOrgCtx: EngineContext = { userId: USER, orgId: null }
     db.prepare('UPDATE profiles SET org_id = NULL WHERE id = ?').run(USER)
 
@@ -130,25 +134,24 @@ describe('localdb engine', () => {
       { table: 'organizations', action: 'insert', values: { name: 'New Org', slug: 'new-org' }, single: true, returning: true },
       noOrgCtx
     )
-    expect(orgInsert.error).toBeNull()
-    const newOrgId = (orgInsert.data as { id: string }).id
+    expect(orgInsert.error).not.toBeNull()
 
     const link = run(
       {
         table: 'profiles',
         action: 'update',
-        values: { org_id: newOrgId, role: 'admin' },
+        values: { org_id: 'org-somewhere-else', role: 'admin' },
         filters: [{ method: 'eq', column: 'id', value: USER }],
       },
       noOrgCtx
     )
-    expect(link.error).toBeNull()
+    expect(link.error).not.toBeNull()
     const profile = db.prepare('SELECT org_id, role FROM profiles WHERE id = ?').get(USER) as {
-      org_id: string
+      org_id: string | null
       role: string
     }
-    expect(profile.org_id).toBe(newOrgId)
-    expect(profile.role).toBe('admin')
+    expect(profile.org_id).toBeNull()
+    expect(profile.role).not.toBe('admin')
   })
 
   it('rejects org-scoped access without an org', () => {

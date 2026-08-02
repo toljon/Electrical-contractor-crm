@@ -12,5 +12,5 @@ else
   echo "TGG daemon is not installed."
 fi
 
-# Clean up lock file
-rm -f /tmp/tgg-daemon.lock
+# Clean up lock dir
+rm -rf /tmp/tgg-daemon.lock

@@ -81,7 +81,9 @@ export function Sidebar({ demo = false }: { demo?: boolean }) {
     router.push('/login')
   }
 
-  const signOutButton = (
+  // In demo mode signing out cannot work: the middleware signs the visitor
+  // straight back in on /login, so the button would silently do nothing.
+  const signOutButton = demo ? null : (
     <button
       onClick={handleSignOut}
       className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-gray-400 hover:bg-white/10 hover:text-white w-full transition-colors"

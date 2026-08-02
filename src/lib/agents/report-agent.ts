@@ -33,7 +33,7 @@ export async function generateExecutiveSummary(data: ReportData): Promise<string
     .join(', ')
 
   const message = await client.messages.create({
-    model: 'claude-sonnet-4-6',
+    model: 'claude-sonnet-5',
     max_tokens: 500,
     messages: [
       {
@@ -53,5 +53,11 @@ Write in third person. Be factual and professional. Lead with the overall condit
     ],
   })
 
-  return message.content[0].type === 'text' ? message.content[0].text : ''
+  // A refusal comes back with no content blocks at all
+  const block = message.content[0]
+  if (!block || block.type !== 'text') {
+    throw new Error('The model returned no summary text')
+  }
+
+  return block.text
 }

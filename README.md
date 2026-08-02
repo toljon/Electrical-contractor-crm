@@ -41,15 +41,16 @@ with it.
 - **Tailwind CSS** + **shadcn/ui**
 - **@react-pdf/renderer** — server-side PDF generation
 - **@anthropic-ai/sdk** — AI executive summaries for inspection reports
-- **react-hook-form** + **zod** — form validation
+- **zod** — API request body validation (forms use plain controlled React state)
 - **react-dropzone** — field photo uploads (stored on local disk)
 
 > This version is fully self-contained. The database lives at
 > `data/tgg-ops.db` and photos in `data/uploads/` — back up `data/` to keep
 > everything. The data layer speaks the Supabase client API
-> (`src/lib/supabase/*` are drop-in local adapters), so moving to hosted
-> Supabase later is a matter of swapping those two files back —
-> see [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
+> (`src/lib/supabase/*` are local adapters), so moving to hosted Supabase
+> later means writing real `@supabase/supabase-js` clients in place of those
+> two adapters — not implemented yet, see
+> [docs/SUPABASE_SETUP.md](docs/SUPABASE_SETUP.md).
 
 ---
 
@@ -140,11 +141,10 @@ src/
 │       └── photos/upload/          # Field photo upload
 ├── components/
 │   ├── pdf/ReportTemplate.tsx # @react-pdf/renderer template
-│   ├── reports/               # Field input components
 │   └── layout/Sidebar.tsx
 ├── lib/
 │   ├── agents/report-agent.ts # Claude-powered summary generation
-│   └── supabase/              # Client + server Supabase clients
+│   └── supabase/              # Local SQLite adapters (Supabase client API)
 ├── types/database.ts          # Domain types + trade/report taxonomies
 └── middleware.ts              # Auth protection
 supabase/

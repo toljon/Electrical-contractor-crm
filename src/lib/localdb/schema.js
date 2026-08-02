@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS customers (
   billing_city    TEXT,
   billing_state   TEXT,
   billing_zip     TEXT,
-  payment_terms   TEXT DEFAULT 'net30',
+  payment_terms   TEXT DEFAULT 'net30' CHECK (payment_terms IN ('net15','net30','net60','prepaid')),
   tax_exempt      INTEGER DEFAULT 0,
   notes           TEXT,
   status          TEXT DEFAULT 'active' CHECK (status IN ('active','inactive')),
@@ -63,7 +63,8 @@ CREATE TABLE IF NOT EXISTS contacts (
   title        TEXT,
   email        TEXT,
   phone        TEXT,
-  contact_type TEXT DEFAULT 'primary',
+  contact_type TEXT DEFAULT 'primary'
+                 CHECK (contact_type IN ('primary','billing','operations','safety','other')),
   is_primary   INTEGER DEFAULT 0,
   created_at   TEXT DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))
 );
@@ -114,13 +115,15 @@ CREATE TABLE IF NOT EXISTS contracts (
   org_id               TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   customer_id          TEXT NOT NULL REFERENCES customers(id),
   contract_number      TEXT,
-  contract_type        TEXT DEFAULT 'inspection',
-  status               TEXT DEFAULT 'active',
+  contract_type        TEXT DEFAULT 'inspection'
+                         CHECK (contract_type IN ('inspection','service','installation','msa')),
+  status               TEXT DEFAULT 'active'
+                         CHECK (status IN ('draft','active','expired','cancelled')),
   start_date           TEXT NOT NULL,
   end_date             TEXT,
   auto_renew           INTEGER DEFAULT 1,
   renewal_notice_days  INTEGER DEFAULT 60,
-  inspection_frequency TEXT,
+  inspection_frequency TEXT CHECK (inspection_frequency IN ('monthly','quarterly','semi_annual','annual')),
   value_cents          INTEGER,
   payment_terms        TEXT DEFAULT 'net30',
   notes                TEXT,
@@ -228,7 +231,7 @@ CREATE TABLE IF NOT EXISTS test_readings (
   id           TEXT PRIMARY KEY,
   org_id       TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   report_id    TEXT NOT NULL REFERENCES inspection_reports(id) ON DELETE CASCADE,
-  equipment_id TEXT REFERENCES equipment(id),
+  equipment_id TEXT REFERENCES equipment(id) ON DELETE SET NULL,
   parameter    TEXT NOT NULL,
   value        TEXT,
   unit         TEXT,
@@ -242,7 +245,7 @@ CREATE TABLE IF NOT EXISTS findings (
   id             TEXT PRIMARY KEY,
   org_id         TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   report_id      TEXT NOT NULL REFERENCES inspection_reports(id) ON DELETE CASCADE,
-  equipment_id   TEXT REFERENCES equipment(id),
+  equipment_id   TEXT REFERENCES equipment(id) ON DELETE SET NULL,
   severity       TEXT CHECK (severity IN ('critical','major','minor','observation')),
   description    TEXT NOT NULL,
   standard_ref   TEXT,
@@ -257,8 +260,8 @@ CREATE TABLE IF NOT EXISTS photos (
   id           TEXT PRIMARY KEY,
   org_id       TEXT NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
   report_id    TEXT REFERENCES inspection_reports(id) ON DELETE CASCADE,
-  finding_id   TEXT REFERENCES findings(id),
-  equipment_id TEXT REFERENCES equipment(id),
+  finding_id   TEXT REFERENCES findings(id) ON DELETE CASCADE,
+  equipment_id TEXT REFERENCES equipment(id) ON DELETE SET NULL,
   storage_path TEXT NOT NULL,
   caption      TEXT,
   taken_at     TEXT,
@@ -267,12 +270,46 @@ CREATE TABLE IF NOT EXISTS photos (
 
 CREATE INDEX IF NOT EXISTS idx_profiles_org ON profiles(org_id);
 CREATE INDEX IF NOT EXISTS idx_customers_org ON customers(org_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_org ON contacts(org_id);
+CREATE INDEX IF NOT EXISTS idx_contacts_customer ON contacts(customer_id);
+CREATE INDEX IF NOT EXISTS idx_locations_org ON locations(org_id);
 CREATE INDEX IF NOT EXISTS idx_locations_customer ON locations(customer_id);
+CREATE INDEX IF NOT EXISTS idx_equipment_org ON equipment(org_id);
 CREATE INDEX IF NOT EXISTS idx_equipment_location ON equipment(location_id);
+CREATE INDEX IF NOT EXISTS idx_equipment_customer ON equipment(customer_id);
+CREATE INDEX IF NOT EXISTS idx_contracts_org ON contracts(org_id);
+CREATE INDEX IF NOT EXISTS idx_projects_org ON projects(org_id);
 CREATE INDEX IF NOT EXISTS idx_work_orders_org ON work_orders(org_id);
+CREATE INDEX IF NOT EXISTS idx_work_orders_customer ON work_orders(customer_id);
+CREATE INDEX IF NOT EXISTS idx_work_orders_location ON work_orders(location_id);
+CREATE INDEX IF NOT EXISTS idx_work_orders_project ON work_orders(project_id);
+CREATE INDEX IF NOT EXISTS idx_work_orders_assigned ON work_orders(assigned_to);
+CREATE INDEX IF NOT EXISTS idx_reports_org ON inspection_reports(org_id);
 CREATE INDEX IF NOT EXISTS idx_reports_work_order ON inspection_reports(work_order_id);
+CREATE INDEX IF NOT EXISTS idx_readings_org ON test_readings(org_id);
 CREATE INDEX IF NOT EXISTS idx_readings_report ON test_readings(report_id);
+CREATE INDEX IF NOT EXISTS idx_findings_org ON findings(org_id);
 CREATE INDEX IF NOT EXISTS idx_findings_report ON findings(report_id);
+CREATE INDEX IF NOT EXISTS idx_photos_org ON photos(org_id);
 CREATE INDEX IF NOT EXISTS idx_photos_report ON photos(report_id);
+CREATE INDEX IF NOT EXISTS idx_photos_finding ON photos(finding_id);
+CREATE INDEX IF NOT EXISTS idx_assemblies_org ON prefab_assemblies(org_id);
 CREATE INDEX IF NOT EXISTS idx_assemblies_project ON prefab_assemblies(project_id);
+
+-- Databases created before the ON DELETE clauses above keep their original
+-- table definitions (CREATE TABLE IF NOT EXISTS never rewrites them), so these
+-- triggers apply the same detach-then-delete behavior on every database.
+CREATE TRIGGER IF NOT EXISTS trg_findings_delete_photos
+BEFORE DELETE ON findings
+BEGIN
+  DELETE FROM photos WHERE finding_id = OLD.id;
+END;
+
+CREATE TRIGGER IF NOT EXISTS trg_equipment_delete_detach
+BEFORE DELETE ON equipment
+BEGIN
+  UPDATE test_readings SET equipment_id = NULL WHERE equipment_id = OLD.id;
+  UPDATE findings SET equipment_id = NULL WHERE equipment_id = OLD.id;
+  UPDATE photos SET equipment_id = NULL WHERE equipment_id = OLD.id;
+END;
 `

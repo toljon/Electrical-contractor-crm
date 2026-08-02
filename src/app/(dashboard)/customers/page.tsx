@@ -3,12 +3,12 @@ import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
-import { Plus, Users, ChevronRight, Building2 } from 'lucide-react'
+import { Plus, Users, ChevronRight, Building2, AlertTriangle } from 'lucide-react'
 
 export default async function CustomersPage() {
   const supabase = await createClient()
 
-  const { data: customers } = await supabase
+  const { data: customers, error } = await supabase
     .from('customers')
     .select('*, locations(count), work_orders(count)')
     .eq('status', 'active')
@@ -29,7 +29,17 @@ export default async function CustomersPage() {
         </Link>
       </div>
 
-      {!customers || customers.length === 0 ? (
+      {error ? (
+        <Card>
+          <CardContent className="text-center py-16">
+            <AlertTriangle className="h-12 w-12 text-red-300 mx-auto mb-4" />
+            <p className="font-medium text-gray-900 mb-1">Customers could not be loaded.</p>
+            <p className="text-sm text-gray-500">
+              This is a load failure, not an empty list — refresh to try again. ({error.message})
+            </p>
+          </CardContent>
+        </Card>
+      ) : !customers || customers.length === 0 ? (
         <Card>
           <CardContent className="text-center py-16">
             <Users className="h-12 w-12 text-gray-200 mx-auto mb-4" />

@@ -147,7 +147,7 @@ CREATE TABLE contracts (
   renewal_notice_days INT DEFAULT 60,
   inspection_frequency TEXT
                         CHECK (inspection_frequency IN ('monthly', 'quarterly', 'semi_annual', 'annual')),
-  value_cents         INT, -- annual contract value in cents
+  value_cents         BIGINT, -- annual contract value in cents
   payment_terms       TEXT DEFAULT 'net30',
   notes               TEXT,
   created_at          TIMESTAMPTZ DEFAULT NOW()

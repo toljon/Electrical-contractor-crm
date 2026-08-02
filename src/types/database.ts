@@ -155,6 +155,7 @@ export interface Organization {
   zip: string | null
   phone: string | null
   email: string | null
+  website: string | null
   license_number: string | null
   created_at: string
 }
@@ -209,9 +210,13 @@ export interface Location {
   city: string | null
   state: string | null
   zip: string | null
+  latitude: number | null
+  longitude: number | null
   site_contact: string | null
   site_phone: string | null
+  site_email: string | null
   access_notes: string | null
+  service_hours: string | null
   created_at: string
 }
 
@@ -268,6 +273,7 @@ export interface WorkOrder {
   trade: Trade | null
   status: WorkOrderStatus
   scheduled_date: string | null
+  scheduled_time: string | null
   estimated_hours: number | null
   priority: 'low' | 'normal' | 'high' | 'emergency'
   special_instructions: string | null
@@ -332,9 +338,15 @@ export interface InspectionReport {
   technician_id: string | null
   technician_name: string | null
   technician_certs: string | null
+  ambient_temp_f: number | null
+  humidity_pct: number | null
+  weather_conditions: string | null
   executive_summary: string | null
   compliance_statement: string | null
   next_inspection_date: string | null
+  customer_signature: string | null
+  signed_by: string | null
+  signed_at: string | null
   pdf_url: string | null
   notes: string | null
   created_at: string
@@ -376,6 +388,7 @@ export interface Photo {
   equipment_id: string | null
   storage_path: string
   caption: string | null
+  taken_at: string | null
   created_at: string
 }
 

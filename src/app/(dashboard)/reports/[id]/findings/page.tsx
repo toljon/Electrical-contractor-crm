@@ -501,6 +501,7 @@ function FindingCard({
             <Button
               size="sm"
               variant="ghost"
+              aria-label="Delete finding"
               onClick={() => onRemove(idx)}
               className="text-red-500 hover:text-red-700 hover:bg-red-50"
             >

@@ -17,16 +17,23 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Public routes
-  if (path.startsWith('/login') || path.startsWith('/onboarding')) {
-    if (path.startsWith('/login')) {
-      if (userId) return NextResponse.redirect(new URL('/dashboard', request.url))
+  if (path.startsWith('/login')) {
+    // The dashboard sends holders of a signed-but-unknown session here (their
+    // user row is gone). The cookie has to be cleared on the way in, or this
+    // and the dashboard redirect to each other until the browser gives up.
+    if (request.nextUrl.searchParams.get('expired') === '1') {
       if (demoMode()) return demoSignIn('/dashboard')
+      const response = NextResponse.next()
+      response.cookies.set(SESSION_COOKIE, '', { path: '/', maxAge: 0 })
+      return response
     }
+    if (userId) return NextResponse.redirect(new URL('/dashboard', request.url))
+    if (demoMode()) return demoSignIn('/dashboard')
     return NextResponse.next()
   }
 
-  // Unauthenticated → demo sign-in or login
+  // Unauthenticated → demo sign-in or login. /onboarding is included: it
+  // creates an organization, so it needs a session like any other page.
   if (!userId) {
     if (demoMode()) return demoSignIn(path === '/' ? '/dashboard' : path)
     return NextResponse.redirect(new URL('/login', request.url))

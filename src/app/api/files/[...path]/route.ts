@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import path from 'path'
 import fs from 'fs/promises'
-import { UPLOADS_DIR } from '@/lib/localdb/database'
+import { getDb, UPLOADS_DIR } from '@/lib/localdb/database'
+import { getEngineContext } from '@/lib/localdb/auth'
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/localdb/session'
 
 const MIME: Record<string, string> = {
@@ -26,6 +27,15 @@ export async function GET(
   if (!resolved.startsWith(path.resolve(UPLOADS_DIR) + path.sep)) {
     return NextResponse.json({ error: 'Invalid path' }, { status: 400 })
   }
+
+  const { orgId } = getEngineContext(userId)
+  if (!orgId) return NextResponse.json({ error: 'No organization' }, { status: 403 })
+
+  // photos.storage_path is stored slash-joined and relative to UPLOADS_DIR
+  const owned = getDb()
+    .prepare('SELECT 1 FROM photos WHERE storage_path = ? AND org_id = ?')
+    .get(segments.join('/'), orgId)
+  if (!owned) return NextResponse.json({ error: 'File not found' }, { status: 404 })
 
   try {
     const file = await fs.readFile(resolved)

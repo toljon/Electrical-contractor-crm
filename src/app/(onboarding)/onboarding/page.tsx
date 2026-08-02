@@ -28,38 +28,30 @@ export default function OnboardingPage() {
 
     const supabase = createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return
-
-    const slug = form.companyName.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-')
-
-    // Create organization
-    const { data: org, error: orgError } = await supabase
-      .from('organizations')
-      .insert({
-        name: form.companyName,
-        slug: `${slug}-${Math.random().toString(36).slice(2, 6)}`,
-        phone: form.phone,
-        city: form.city,
-        state: form.state,
-        license_number: form.licenseNumber,
-      })
-      .select()
-      .single()
-
-    if (orgError) {
-      setError(orgError.message)
+    if (!user) {
+      setError('Your session has expired. Please sign in again.')
       setLoading(false)
+      router.push('/login')
       return
     }
 
-    // Link profile to org, set role to admin
-    const { error: profileError } = await supabase
-      .from('profiles')
-      .update({ org_id: org.id, role: 'admin' })
-      .eq('id', user.id)
+    // Creating the org and linking the profile happen together on the server —
+    // they set org_id and role, which the query endpoint will not accept.
+    const res = await fetch('/api/onboarding', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        companyName: form.companyName,
+        licenseNumber: form.licenseNumber,
+        phone: form.phone,
+        city: form.city,
+        state: form.state,
+      }),
+    }).catch(() => null)
 
-    if (profileError) {
-      setError(profileError.message)
+    if (!res || !res.ok) {
+      const json = res ? await res.json().catch(() => null) : null
+      setError(json?.error ?? 'Could not create your organization. Please try again.')
       setLoading(false)
       return
     }

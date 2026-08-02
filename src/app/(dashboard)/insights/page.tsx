@@ -187,12 +187,12 @@ export default async function InsightsPage() {
                         {Math.round(r.actual)}h
                         {/* Under-runs are as informative as over-runs: one says
                             the bid is too thin, the other that it is too fat. */}
-                        {r.actual > r.est * (1 + VARIANCE_THRESHOLD) && (
+                        {r.est > 0 && r.actual > r.est * (1 + VARIANCE_THRESHOLD) && (
                           <span className="text-amber-800 ml-1 font-medium">
                             +{Math.round(((r.actual - r.est) / r.est) * 100)}%
                           </span>
                         )}
-                        {r.actual < r.est * (1 - VARIANCE_THRESHOLD) && (
+                        {r.est > 0 && r.actual < r.est * (1 - VARIANCE_THRESHOLD) && (
                           <span className="text-green-800 ml-1 font-medium">
                             {Math.round(((r.actual - r.est) / r.est) * 100)}%
                           </span>

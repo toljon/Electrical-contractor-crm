@@ -36,6 +36,12 @@ interface WorkOrderData {
   location: { name: string } | null
 }
 
+function parseNumericField(value: string) {
+  const parsed = Number(value)
+  if (!value.trim() || !Number.isFinite(parsed)) return null
+  return parsed
+}
+
 function NewReportForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -43,6 +49,7 @@ function NewReportForm() {
   const workOrderId = searchParams.get('workOrderId') ?? ''
 
   const [workOrder, setWorkOrder] = useState<WorkOrderData | null>(null)
+  const [workOrderError, setWorkOrderError] = useState<string | null>(null)
   const [reportType, setReportType] = useState<ReportType | ''>('')
   const [testDate, setTestDate] = useState(
     new Date().toISOString().split('T')[0]
@@ -58,15 +65,21 @@ function NewReportForm() {
   // Fetch work order on mount
   useEffect(() => {
     async function loadWorkOrder() {
-      if (!workOrderId) return
-      const { data } = await supabase
+      if (!workOrderId) {
+        setWorkOrderError('no work order was specified in the link')
+        return
+      }
+      const { data, error } = await supabase
         .from('work_orders')
         .select('id, customer_id, location_id, customer:customers(name), location:locations(name)')
         .eq('id', workOrderId)
         .single()
-      if (data) {
-        setWorkOrder(data as unknown as WorkOrderData)
+      if (error || !data) {
+        setWorkOrderError(error?.message ?? 'Work order not found')
+        return
       }
+      setWorkOrder(data as unknown as WorkOrderData)
+      setWorkOrderError(null)
     }
     loadWorkOrder()
   }, [workOrderId]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -90,6 +103,14 @@ function NewReportForm() {
     }
     if (!workOrderId) {
       toast.error('Work order is required')
+      return
+    }
+    if (!workOrder?.customer_id) {
+      toast.error(
+        workOrderError
+          ? `Could not load the work order: ${workOrderError}`
+          : 'Work order is still loading — please wait'
+      )
       return
     }
 
@@ -121,20 +142,16 @@ function NewReportForm() {
       .insert({
         org_id: profile.org_id,
         work_order_id: workOrderId,
-        customer_id: workOrder?.customer_id ?? '',
-        location_id: workOrder?.location_id ?? null,
+        customer_id: workOrder.customer_id,
+        location_id: workOrder.location_id ?? null,
         report_type: reportType,
         report_number: reportNumber || null,
         test_date: testDate,
         technician_name: technicianName || null,
         technician_certs: technicianCerts || null,
-        notes: [
-          ambientTempF && `Ambient Temp: ${ambientTempF}°F`,
-          humidityPct && `Humidity: ${humidityPct}%`,
-          weatherConditions && `Weather: ${weatherConditions}`,
-        ]
-          .filter(Boolean)
-          .join('; ') || null,
+        ambient_temp_f: parseNumericField(ambientTempF),
+        humidity_pct: parseNumericField(humidityPct),
+        weather_conditions: weatherConditions.trim() || null,
       })
       .select()
       .single()
@@ -153,6 +170,13 @@ function NewReportForm() {
     (workOrder?.customer as { name: string } | null)?.name ?? 'Loading...'
   const locationName =
     (workOrder?.location as { name: string } | null)?.name ?? ''
+  const submitLabel = loading
+    ? 'Creating...'
+    : workOrder
+      ? 'Create Report & Add Readings'
+      : workOrderError
+        ? 'Work order unavailable'
+        : 'Loading work order...'
 
   return (
     <div className="p-4 md:p-8 max-w-2xl">
@@ -170,6 +194,12 @@ function NewReportForm() {
       <p className="text-gray-500 mb-8">
         Set up report details — you will add test readings and findings next.
       </p>
+
+      {workOrderError && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-sm text-red-700">
+          Could not load the work order: {workOrderError}
+        </div>
+      )}
 
       {workOrder && (
         <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6 text-sm">
@@ -303,10 +333,10 @@ function NewReportForm() {
               </Button>
               <Button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !workOrder}
                 className="bg-ink hover:bg-ink-hover text-white font-semibold"
               >
-                {loading ? 'Creating...' : 'Create Report & Add Readings'}
+                {submitLabel}
               </Button>
             </div>
           </form>
