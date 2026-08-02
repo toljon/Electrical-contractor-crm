@@ -18,6 +18,9 @@
 import { randomBytes, scryptSync } from 'crypto'
 
 export function seedDemo(db) {
+// One transaction: the auto-seed in database.ts only runs while the users
+// table is empty, so a half-finished seed would never be retried.
+const seedAll = db.transaction(() => {
 // ── helpers ─────────────────────────────────────────────
 let idSeq = 0
 const uuid = () => `demo-${String(++idSeq).padStart(4, '0')}`
@@ -28,6 +31,11 @@ const hashPassword = (password) => {
 const daysFromNow = (n) => {
   const d = new Date()
   d.setDate(d.getDate() + n)
+  return d.toISOString().split('T')[0]
+}
+const daysAfter = (date, n) => {
+  const d = new Date(`${date}T00:00:00Z`)
+  d.setUTCDate(d.getUTCDate() + n)
   return d.toISOString().split('T')[0]
 }
 // deterministic pseudo-random so re-seeding gives the same demo
@@ -292,7 +300,7 @@ function pmVisit({ locName, trade, reportType, date, tech, techName, certs, quar
     location_id: loc.id, report_number: `TGG-${repSeq++}`,
     report_type: reportType, test_date: date,
     technician_id: tech, technician_name: techName, technician_certs: certs,
-    next_inspection_date: daysFromNow(90),
+    next_inspection_date: daysAfter(date, 90),
   })
   db.prepare('UPDATE work_orders SET report_generated = 1 WHERE id = ?').run(woId)
 
@@ -482,5 +490,8 @@ for (const [type, trade, [lo, hi], bias, count, prefix] of assemblyPatterns) {
   }
 }
 
+})
+
+seedAll()
   return { login: 'demo@tggallagher.com', password: 'gallagher' }
 }

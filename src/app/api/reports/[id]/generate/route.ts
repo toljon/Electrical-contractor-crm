@@ -24,31 +24,42 @@ export async function POST(
 
   if (!report) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  const summary = await generateExecutiveSummary({
-    customerName: (report.customer as { name: string })?.name ?? 'Unknown',
-    locationName: (report.location as { name: string })?.name ?? 'Unknown',
-    reportType: report.report_type ?? 'Inspection',
-    testDate: report.test_date,
-    technicianName: report.technician_name ?? 'Technician',
-    findings: (report.findings as Array<{ severity: string; description: string; recommendation: string | null; standard_ref: string | null }>).map(f => ({
-      severity: f.severity,
-      description: f.description,
-      recommendation: f.recommendation,
-      standardRef: f.standard_ref,
-    })),
-    readings: (report.test_readings as Array<{ parameter: string; value: string | null; unit: string | null; result: string | null }>).map(r => ({
-      parameter: r.parameter,
-      value: r.value,
-      unit: r.unit,
-      result: r.result,
-    })),
-  })
+  let summary: string
+  try {
+    summary = await generateExecutiveSummary({
+      customerName: (report.customer as { name: string })?.name ?? 'Unknown',
+      locationName: (report.location as { name: string })?.name ?? 'Unknown',
+      reportType: report.report_type ?? 'Inspection',
+      testDate: report.test_date,
+      technicianName: report.technician_name ?? 'Technician',
+      findings: (report.findings as Array<{ severity: string; description: string; recommendation: string | null; standard_ref: string | null }>).map(f => ({
+        severity: f.severity,
+        description: f.description,
+        recommendation: f.recommendation,
+        standardRef: f.standard_ref,
+      })),
+      readings: (report.test_readings as Array<{ parameter: string; value: string | null; unit: string | null; result: string | null }>).map(r => ({
+        parameter: r.parameter,
+        value: r.value,
+        unit: r.unit,
+        result: r.result,
+      })),
+    })
+  } catch (err) {
+    console.error('[reports/generate] summary failed:', err)
+    return NextResponse.json({ error: 'Could not generate the executive summary' }, { status: 502 })
+  }
 
   // Save summary to report
-  await supabase
+  const { error: updateError } = await supabase
     .from('inspection_reports')
     .update({ executive_summary: summary })
     .eq('id', id)
+
+  if (updateError) {
+    console.error('[reports/generate] save failed:', updateError)
+    return NextResponse.json({ error: 'Could not save the executive summary' }, { status: 500 })
+  }
 
   return NextResponse.json({ summary })
 }

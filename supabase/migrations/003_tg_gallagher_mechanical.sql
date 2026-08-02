@@ -35,6 +35,11 @@ ALTER TABLE work_orders ADD CONSTRAINT work_orders_work_type_check
 -- INSPECTION REPORTS: mechanical report types
 -- ─────────────────────────────────────────────
 ALTER TABLE inspection_reports DROP CONSTRAINT IF EXISTS inspection_reports_report_type_check;
+-- The electrical report types have no mechanical counterpart, so existing rows
+-- are cleared rather than mapped onto a discipline they were not written for.
+UPDATE inspection_reports SET report_type = NULL
+  WHERE report_type IS NOT NULL
+    AND report_type NOT IN ('ashrae_180', 'nfpa_25', 'backflow', 'tab', 'med_gas', 'commissioning');
 ALTER TABLE inspection_reports ADD CONSTRAINT inspection_reports_report_type_check
   CHECK (report_type IN ('ashrae_180', 'nfpa_25', 'backflow', 'tab', 'med_gas', 'commissioning'));
 
