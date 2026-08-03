@@ -1,11 +1,18 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { SESSION_COOKIE, verifySessionToken } from '@/lib/localdb/session'
 import { demoMode } from '@/lib/demo'
+import { trackVisit } from '@/lib/visits/beacon'
 
 // Session-cookie auth guard. Runs on the edge runtime, so it only verifies
 // the signed cookie — the org-membership check (→ /onboarding) lives in the
 // (dashboard) layout, which has database access.
 export async function middleware(request: NextRequest) {
+  // Private access log (src/lib/visits). Deferred to after() and wrapped in its
+  // own error handling, so it adds nothing to response latency and cannot fail
+  // the request. Runs before the auth branches below because every one of them
+  // returns, and a redirect to the demo sign-in is still a visit.
+  trackVisit(request)
+
   const userId = await verifySessionToken(request.cookies.get(SESSION_COOKIE)?.value)
   const path = request.nextUrl.pathname
 
