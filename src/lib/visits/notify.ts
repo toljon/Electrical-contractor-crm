@@ -5,6 +5,21 @@
 import { watchTerms, webhookUrl } from './config'
 import type { Visit } from './types'
 
+/**
+ * One-line form of a visit, for the runtime log.
+ *
+ * This is the sink of last resort: Vercel captures stdout from both the edge
+ * and Node runtimes, so a visit that reaches neither store is still visible in
+ * the deployment's logs. Both the recorder and the middleware emit it, which is
+ * what keeps a blocked or unreachable recorder from losing the record entirely.
+ */
+export function visitLogLine(visit: Visit): string {
+  const where = [visit.city, visit.country].filter(Boolean).join('/') || '-'
+  return `[visit] ${visit.kind} ${visit.ip ?? '-'} ${visit.path} ${where}${
+    visit.network ? ` ${visit.network}` : ''
+  }`
+}
+
 /** Coarse browser/OS read of a user-agent — enough to tell phone from desktop. */
 export function describeDevice(userAgent: string | null): string {
   if (!userAgent) return 'unknown client'

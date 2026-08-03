@@ -16,7 +16,7 @@ import { accessKey, accessKeyTooShort, trackingEnabled } from '@/lib/visits/conf
 import { isIgnoredVisit } from '@/lib/visits/collect'
 import { SIGNATURE_HEADER, timingSafeEqual, verifyBody } from '@/lib/visits/signature'
 import { lookupNetwork } from '@/lib/visits/enrich'
-import { notifyVisit } from '@/lib/visits/notify'
+import { notifyVisit, visitLogLine } from '@/lib/visits/notify'
 import { buildSessions, summarise } from '@/lib/visits/sessions'
 import { renderReport } from '@/lib/visits/report'
 import { isNewSession, readVisits, recordVisit } from '@/lib/visits/store'
@@ -83,9 +83,7 @@ export async function POST(request: NextRequest) {
 
   // Structured line so the visit survives in Vercel's runtime logs even if
   // both stores are unavailable.
-  console.log(
-    `[visit] ${visit.kind} ${visit.ip ?? '-'} ${visit.path} ${[visit.city, visit.country].filter(Boolean).join('/') || '-'}${visit.network ? ` ${visit.network}` : ''}`
-  )
+  console.log(visitLogLine(visit))
 
   await recordVisit(visit)
   if (fresh) await notifyVisit(visit)

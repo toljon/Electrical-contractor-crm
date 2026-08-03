@@ -136,6 +136,26 @@ SQLite. The HMAC exists because that route is publicly reachable — without a
 signature anyone could write fabricated visits into your log. Requests are
 rejected if the signature is missing, wrong, or more than five minutes old.
 
+### Deployment Protection and the internal hop
+
+Vercel's Deployment Protection sits in front of the entire deployment,
+*including* the middleware's own request to `/api/events` — verified on a
+protected preview deployment, where the hop came back `401`. Preview
+deployments are protected by default; production normally is not, so the hop
+works there without any of this.
+
+Two ways through, if you need it on a protected deployment:
+
+1. Turn on **Protection Bypass for Automation** in the project's settings. That
+   populates `VERCEL_AUTOMATION_BYPASS_SECRET`, which the beacon then sends as
+   `x-vercel-protection-bypass` automatically — no further configuration.
+2. Configure the Redis store. The recorder is then no longer the only path to
+   durable history.
+
+Either way, nothing is lost silently: when the hop fails for any reason, the
+middleware writes the same `[visit] …` line to the runtime log that the
+recorder would have, so the deployment's logs remain a working fallback sink.
+
 ### Files
 
 | Path | Role |

@@ -13,33 +13,53 @@ import { after } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { collectVisit } from './collect'
 import { trackingEnabled } from './config'
+import { visitLogLine } from './notify'
 import { SIGNATURE_HEADER, signBody } from './signature'
 
 async function dispatch(headers: Headers, url: URL, origin: string): Promise<void> {
+  let visit
   try {
-    const visit = await collectVisit({ headers }, url)
+    visit = await collectVisit({ headers }, url)
     if (!visit) return
 
     const body = JSON.stringify(visit)
+    const beaconHeaders: Record<string, string> = {
+      'Content-Type': 'application/json',
+      [SIGNATURE_HEADER]: await signBody(body),
+    }
+
+    // Deployment Protection sits in front of the whole deployment, including
+    // this internal hop, and answers the middleware's own fetch with a 401 —
+    // observed on a protected preview deployment. Vercel's documented way
+    // through is the bypass secret, which is present once "Protection Bypass
+    // for Automation" is enabled for the project.
+    const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+    if (bypass) beaconHeaders['x-vercel-protection-bypass'] = bypass
+
     const response = await fetch(new URL('/api/events', origin), {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        [SIGNATURE_HEADER]: await signBody(body),
-      },
+      headers: beaconHeaders,
       body,
       cache: 'no-store',
       signal: AbortSignal.timeout(5000),
     })
+    if (response.ok) return
 
-    if (!response.ok) {
-      // Last resort: the runtime log still captures the visit even when the
-      // recorder is unreachable, so nothing is silently dropped.
-      console.warn('[visits] recorder returned', response.status, body)
+    if (response.status === 401 || response.status === 403) {
+      console.warn(
+        `[visits] recorder blocked with ${response.status} — Deployment Protection is in front of /api/events. ` +
+          'Enable Protection Bypass for Automation, or configure the Redis store so the log does not depend on this hop.'
+      )
+    } else {
+      console.warn('[visits] recorder returned', response.status)
     }
   } catch (err) {
     console.warn('[visits] dispatch failed:', (err as Error).message)
   }
+
+  // Whatever went wrong above, the visit still reaches the runtime log rather
+  // than being dropped on the floor.
+  if (visit) console.log(visitLogLine(visit))
 }
 
 /**

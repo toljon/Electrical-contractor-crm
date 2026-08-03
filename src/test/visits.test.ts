@@ -6,7 +6,7 @@ import { classify, clientIp, collectVisit, isIgnoredVisit, visitorKey } from '@/
 import { signBody, timingSafeEqual, verifyBody } from '@/lib/visits/signature'
 import { buildSessions, summarise } from '@/lib/visits/sessions'
 import { esc, relativeTime } from '@/lib/visits/report'
-import { describeDevice, isWatched } from '@/lib/visits/notify'
+import { describeDevice, isWatched, visitLogLine } from '@/lib/visits/notify'
 import { accessKey, trackingEnabled } from '@/lib/visits/config'
 import { VISIT_INSERT_SQL } from '@/lib/visits/store'
 import type { Visit } from '@/lib/visits/types'
@@ -412,6 +412,20 @@ describe('report rendering', () => {
     expect(relativeTime('2026-08-01T11:30:00.000Z', now)).toBe('30m ago')
     expect(relativeTime('2026-08-01T09:00:00.000Z', now)).toBe('3h ago')
     expect(relativeTime('2026-07-30T12:00:00.000Z', now)).toBe('2d ago')
+  })
+
+  it('formats the fallback log line', () => {
+    // Emitted by both the recorder and the middleware when the hop fails, so
+    // the runtime log stays a usable sink of last resort.
+    expect(
+      visitLogLine(visit({ at: 'x', visitorKey: 'k', ip: '203.0.113.7', path: '/dashboard' }))
+    ).toBe('[visit] human 203.0.113.7 /dashboard Waltham/US')
+
+    expect(
+      visitLogLine(
+        visit({ at: 'x', visitorKey: 'k', ip: null, city: null, country: null, network: 'AS1 Acme' })
+      )
+    ).toBe('[visit] human - / - AS1 Acme')
   })
 
   it('summarises a client from its user-agent', () => {
