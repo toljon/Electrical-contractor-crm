@@ -138,18 +138,38 @@ src/
 │   └── api/
 │       ├── reports/[id]/pdf/       # PDF generation
 │       ├── reports/[id]/generate/  # AI executive summary
-│       └── photos/upload/          # Field photo upload
+│       ├── photos/upload/          # Field photo upload
+│       └── events/                 # Visit recorder + private report
 ├── components/
 │   ├── pdf/ReportTemplate.tsx # @react-pdf/renderer template
 │   └── layout/Sidebar.tsx
 ├── lib/
 │   ├── agents/report-agent.ts # Claude-powered summary generation
+│   ├── visits/                # Private access log for the deployment
 │   └── supabase/              # Local SQLite adapters (Supabase client API)
 ├── types/database.ts          # Domain types + trade/report taxonomies
-└── middleware.ts              # Auth protection
+└── middleware.ts              # Auth protection + visit capture
 supabase/
 └── migrations/                # 001 → 003 (003 = mechanical + prefab schema)
 ```
+
+---
+
+## Who Opened the Demo
+
+The deployment keeps a private access log, so you can tell whether a link you
+sent was actually opened. Capture is entirely server-side — no tracking script,
+no pixel, no extra cookie, nothing in the visitor's network tab — and the report
+is a private URL that is not linked from the app.
+
+```bash
+VISIT_ACCESS_KEY="$(openssl rand -hex 24)"   # then open /api/events?k=<key>
+```
+
+Optionally: a Slack/Discord ping per new visitor, durable history on Vercel via
+Upstash Redis, and network/employer lookup for each address. See
+[docs/VISITOR_TRACKING.md](docs/VISITOR_TRACKING.md) for setup, the accuracy
+caveats, and how to turn it off.
 
 ---
 

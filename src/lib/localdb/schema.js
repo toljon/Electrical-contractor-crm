@@ -312,4 +312,36 @@ BEGIN
   UPDATE findings SET equipment_id = NULL WHERE equipment_id = OLD.id;
   UPDATE photos SET equipment_id = NULL WHERE equipment_id = OLD.id;
 END;
+
+-- Private access log for the public deployment (src/lib/visits/*).
+--
+-- Intentionally absent from the engine's ALLOWED_TABLES: demo mode signs every
+-- visitor in as the demo user, so anything reachable through /api/db is
+-- readable by the very people this table records. It has no org_id for the same
+-- reason — it belongs to the deployment, not to a tenant. Reads and writes go
+-- through src/lib/visits/store.ts, which talks to better-sqlite3 directly.
+CREATE TABLE IF NOT EXISTS site_visits (
+  id           TEXT PRIMARY KEY,
+  at           TEXT NOT NULL,
+  visitor_key  TEXT NOT NULL,
+  ip           TEXT,
+  host         TEXT,
+  path         TEXT NOT NULL,
+  query        TEXT,
+  referrer     TEXT,
+  user_agent   TEXT,
+  country      TEXT,
+  region       TEXT,
+  city         TEXT,
+  timezone     TEXT,
+  network      TEXT,
+  kind         TEXT NOT NULL DEFAULT 'human'
+                 CHECK (kind IN ('human','preview','bot')),
+  kind_reason  TEXT,
+  env          TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_site_visits_at ON site_visits(at);
+CREATE INDEX IF NOT EXISTS idx_site_visits_visitor ON site_visits(visitor_key);
+CREATE INDEX IF NOT EXISTS idx_site_visits_ip ON site_visits(ip);
 `
